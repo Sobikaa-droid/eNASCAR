@@ -1,33 +1,29 @@
 {% extends 'base.html' %}
-
 {% block title %}Racers{% endblock %}
-
 {% block content %}
-
-<div class="bg-light grey_container">
-  <div class="container">
-    <div class="bd-masthead" id="content">
-      {% if racers_count == 0 %}
-      <div class='text-center'>
-        <h1 class="mb-4">There are no racers</h1>
-        <a role="button" class="btn btn-outline-dark btn-lg mb-5" href="">Register Yourself</a>
-      </div>
-      {% else %}
-      <h2 class="text-center">There are {{ racers_count }} racer{{ racers_count|pluralize }}</h2>
-      {% endif %}
-
+<div class="grey_container">
+  <div class="container mt-5 mb-5 w-50">
+    <div class="bd-masthead mt-5" id="content">
       <div class="list-group mb-5 mt-5">
         {% for racer in racers %}
         <a href="{{ racer.get_absolute_url }}" class="list-group-item list-group-item-action">
-          <h5 class="mb-1">
-            {{ racer.first_name }} {{ racer.second_name }} №{{ racer.number }}
-          </h5>
-          <small class="text-muted">66</small>
+          <div class="d-flex align-middle">
+            <div class="me-auto">
+              <h5 class="mb-1 mt-1">{{ racer.username }}</h5>
+              <small class="text-muted">{{ racer.description|striptags|truncatechars:50 }}</small>
+            </div>
+            <h4 class="mt-2">
+              <span class="badge rounded-pill text-success">{{ racer.wins }}</span>
+              <span class="badge rounded-pill text-danger">{{ racer.loses }}</span>
+            </h4>
+          </div>
         </a>
+        {% empty %}
+        <h4 class="text-danger mt-3 mb-3 text-center">No results found</h4>
         {% endfor %}
       </div>
     </div>
   </div>
 </div>
-
+{% include 'pagination.html' %}
 {% endblock %}

@@ -49,11 +49,11 @@
 }
 
 .nav-link-active {
-  color: black !important;
+  color: #dc3545 !important;
 }
 
 .nav_link_base:focus, .nav_link_base:hover {
-    color: black;
+    color: #dc3545;
 }
 
 .navbar-toggler {
@@ -63,4 +63,23 @@
 .user_detail {
   box-shadow: 0 0 20px 5px #d9d9d9;
   border-radius: 10px 10px 10px 10px;
+}
+
+/* PAGINATION */
+
+.pagination {
+    --bs-pagination-bg: transparent;
+    --bs-pagination-border-color: #d9d9d9;
+    --bs-pagination-font-size: 1.2rem;
+    --bs-pagination-color: #dc3545;
+    --bs-pagination-hover-color: white;
+    --bs-pagination-hover-bg: #dc3545;
+    --bs-pagination-hover-border-color: #dc3545;
+    --bs-pagination-focus-color: white;
+    --bs-pagination-focus-bg: #dc3545;
+    --bs-pagination-active-color: white;
+    --bs-pagination-active-bg: #dc3545;
+    --bs-pagination-active-border-color: #dc3545;
+    --bs-pagination-disabled-bg: transparent;
+    --bs-pagination-disabled-border-color: #d9d9d9;
 }

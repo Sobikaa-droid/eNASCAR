@@ -1,3 +1,4 @@
+from django.db.models import Count
 from django.views import generic
 from rest_framework import generics
 from rest_framework.response import Response
@@ -26,12 +27,16 @@ class RaceAPIViewSet(viewsets.ModelViewSet):
 
 
 class RaceListView(generic.ListView):
+    model = Race
     context_object_name = 'races'
     paginate_by = 15
     template_name = "races/races_list.html"
 
     def get_queryset(self):
-        return Race.objects.all()
+        qs = super().get_queryset()
+        qs = qs.annotate(racers_count=Count('racers'))
+
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
