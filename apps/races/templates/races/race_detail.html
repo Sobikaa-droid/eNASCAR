@@ -1,43 +1,33 @@
 {% extends 'base.html' %}
-{% block title %}{{ racer.username }}{% endblock %}
+{% block title %}{{ race.name }}{% endblock %}
 {% block content %}
 {% load widget_tweaks %}
-<div class="container mt-5" data-bs-theme="dark">
-  <div class="user_detail">
+<div class="container mt-5 w-25">
+  <div class="">
     <div class="d-flex flex-wrap justify-content-center">
-      <div class='user_detail_info ms-5 w-50 mt-5 mb-5'>
-        <div class="d-flex">
-          <h1 class="flex-grow-1">{{ racer.username }} {% if racer.verified %}<i class="fa-solid fa-check text-danger"></i>{% endif %}</h1>
-          {% if request.user.pk == racer.pk %}
-          <a class="btn btn-outline-danger" href="">Edit</a>
-          {% endif %}
+      <div class="col">
+        <h4 class="d-flex justify-content-between align-items-center mb-3">
+          <span>{{ race.name }}</span>
+              {% if not race.date_of_completion %}
+              <span class="badge rounded-pill bg-success mt-1">ACTIVE</span>
+              {% else %}
+              <span class="badge rounded-pill bg-secondary">OVER</span>
+              {% endif %}
+        </h4>
+        <ul class="list-group">
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Description</span>
+            <strong>NAME</strong>
+          </li>
+          <li class="list-group-item d-flex justify-content-between">
+            <span>Racers</span>
+            <strong>{{ race.racers.count }}/40</strong>
+          </li>
+        </ul>
+        <div class="d-flex justify-content-between align-items-center mt-3">
+          <a href="" class="btn btn-outline-danger">Apply</a>
+          <small class="text-muted">{{ race.creation_date|timesince }} ago</small>
         </div>
-        <hr class="text-danger">
-        <p class="page_description text-secondary lh-base text-break">
-          {{ racer.description|striptags|truncatechars:500 }}
-          {% if racer.description|length >= 501 %}
-          <a class="link-danger text-decoration-none" href="#" role="button" data-bs-toggle="modal" data-bs-target="#modal-show-description">
-          Read Full
-          </a>
-          {% endif %}
-        </p>
-        {% if racer.description|length >= 501 %}
-        <!-- Modal Show Description -->
-        <div class="modal fade" id="modal-show-description" tabindex="-1" aria-labelledby="DescriptionModalLabel" aria-hidden="true" data-bs-theme="dark">
-          <div class="modal-dialog modal-dialog-centered">
-            <div class="modal-content">
-              <div class="modal-header">
-                <h5 class="modal-title text-danger" id="ClearCartModalLabel">Description</h5>
-                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-              </div>
-              <div class="modal-body">
-                <p class="text-light text-break">{{ racer.description }}</p>
-              </div>
-            </div>
-          </div>
-        </div>
-        <!-- ############ -->
-        {% endif %}
       </div>
     </div>
   </div>

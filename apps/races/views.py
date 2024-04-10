@@ -40,7 +40,6 @@ class RaceListView(generic.ListView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        context['races_count'] = self.get_queryset().distinct().count()
 
         return context
 
@@ -49,6 +48,20 @@ class RaceDetailView(generic.DetailView):
     model = Race
     context_object_name = 'race'
     template_name = 'races/race_detail.html'
+
+    def get_object(self, queryset=None):
+        pk = self.kwargs.get('pk')
+        race_object = Race.objects.prefetch_related('racers').get(pk=pk)
+
+        return race_object
+
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     pk = self.kwargs.get('pk')
+    #     obj = self.get_queryset().filter(pk=pk)
+    #     context['racers_count'] = obj.racers_set.count()
+    #
+    #     return context
 
 
 # class AddRacerToRaceView(generics.UpdateAPIView):

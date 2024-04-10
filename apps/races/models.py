@@ -6,7 +6,7 @@ from django.urls import reverse
 
 class Race(models.Model):
     name = models.CharField(max_length=250)
-    date = models.DateTimeField(blank=True, null=True)
+    description = models.TextField(max_length=1500, null=True, blank=True)
     creation_date = models.DateTimeField(auto_now_add=True)
     date_of_completion = models.DateTimeField(default=None, blank=True, null=True)
     is_completed = models.BooleanField(default=False)

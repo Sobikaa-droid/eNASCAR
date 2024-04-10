@@ -10,13 +10,17 @@
           <div class="d-flex align-middle">
             <div class="me-auto">
               <h5 class="mb-1 mt-1">{{ race.name }} <span class="badge rounded-pill bg-primary">{{ race.racers_count }}/40</span></h5>
+              {% if not race.date_of_completion %}
               <small class="text-muted">{{ race.creation_date|timesince }} ago</small>
+              {% else %}
+              <small class="text-muted">{{ race.date_of_completion|timesince }} ago</small>
+              {% endif %}
             </div>
             <h4 class="mt-2">
               {% if not race.date_of_completion %}
-              <span class="badge rounded-pill bg-success mt-1">ACTIVE</span>
+              <span class="badge bg-success mt-1">ACTIVE</span>
               {% else %}
-              <span class="badge rounded-pill bg-secondary">OVER</span>
+              <span class="badge bg-secondary">OVER</span>
               {% endif %}
             </h4>
           </div>
