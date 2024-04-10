@@ -9,7 +9,7 @@
         <a href="{{ racer.get_absolute_url }}" class="list-group-item list-group-item-action">
           <div class="d-flex align-middle">
             <div class="me-auto">
-              <h5 class="mb-1 mt-1">{{ racer.username }}</h5>
+              <h5 class="mb-1 mt-1">{{ racer.first_name }} {{ racer.second_name }} #{{ racer.number }}</h5>
               <small class="text-muted">{{ racer.description|striptags|truncatechars:50 }}</small>
             </div>
             <h4 class="mt-2">
