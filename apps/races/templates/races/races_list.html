@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block title %}Races{% endblock %}
+
+{% block content %}
+
+<div class="bg-light grey_container">
+  <div class="container">
+    <div class="bd-masthead" id="content">
+      {% if races_count == 0 %}
+      <div class='text-center'>
+        <h1 class="mb-4">There are no races</h1>
+      </div>
+      {% else %}
+      <h2 class="text-center">There are {{ races_count }} racer{{ races_count|pluralize }}</h2>
+      {% endif %}
+
+      <div class="list-group mb-5 mt-5">
+        {% for race in races %}
+        <a href="{{ race.get_absolute_url }}" class="list-group-item list-group-item-action">
+          <h5 class="mb-1">
+            {{ race.name }}
+          </h5>
+          <small class="text-muted">{{ race.creation_date|timesince }} ago</small>
+        </a>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock %}

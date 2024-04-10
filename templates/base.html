@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{% endblock %} | NASCAR </title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-T3c6CoIi6uLrA9TneNEoa7RxnatzjcDSCmG1MXxSR1GAsXEV/Dwwykc2MPK8M2HN" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'static.css' %}">
+    <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg sticky-top bg_gradient_red">
+      <div class="container">
+        <a class="navbar-brand" href="{% url 'home' %}">
+        <img src="{% static 'nascar.png' %}" alt="image-logo" width="138" height="25" class="d-inline-block align-top mt-2 site_logo">
+        </a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+          <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+            <li class="nav-item ms-5">
+              <a class="nav-link nav-link-fade-up nav_link_base {% if request.path == '/u/' %} nav-link-active active {% endif %}" href="{% url 'races:race_list'%}">Races</a>
+            </li>
+            <li class="nav-item ms-5">
+              <a class="nav-link nav-link-fade-up nav_link_base {% if request.path == '/player/songs/' %} nav-link-active active {% endif %}" href="{% url 'racers:racer_list'%}">Racers</a>
+            </li>
+          </ul>
+          <ul class="navbar-nav ms-auto mb-2 mb-lg-0 mt-2">
+            {% if request.user.is_authenticated %}
+            <li class="nav-item dropdown">
+              <a class="nav-link nav_link_base" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-toggle="dropdown">
+              {{ request.user.username }} (№{{ request.user.number }})
+              </a>
+              <ul class="dropdown-menu site-menu">
+                <li class="ms-4">
+                  <a class="nav-link nav_link_base {% if request.path == '/u/'|add:user.slug|add:'/' %} text-danger {% endif %}" href="" aria-current="page" type='submit'>Profile</a>
+                </li>
+                <li>
+                  <hr>
+                </li>
+                <li class="ms-4">
+                  <a class="nav-link nav_link_base" href="" aria-current="page" type='submit'><i class="fa-solid fa-right-from-bracket"></i> Log out</a>
+                </li>
+              </ul>
+            </li>
+            {% else %}
+            <li class="nav-item dropdown">
+              <a class="nav-link nav_link_base {% if request.path == '/u/login/' or request.path == '/u/register/' %} text-danger {% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-toggle="dropdown">
+              <i class="fa-regular fa-user"></i>
+              </a>
+              <ul class="dropdown-menu site-menu">
+                <li class="ms-4">
+                  <a class="nav-link nav_link_base nav-link-grow-up {% if request.path == '/u/login/' %} text-danger {% endif %}" href="" aria-current="page" type='submit'>Log In</a>
+                </li>
+                <li class="ms-4">
+                  <a class="nav-link nav_link_base nav-link-grow-up {% if request.path == '/u/register/' %} text-danger {% endif %}" href="" aria-current="page" type='submit'>Sign Up</a>
+                </li>
+              </ul>
+            </li>
+            {% endif %}
+          </ul>
+
+        </div>
+      </div>
+    </nav>
+    {% block content %}
+    {% endblock %}
+    <!-- MESSAGES -->
+    {% if messages %}
+    {% for message in messages %}
+    <div role="alert" aria-live="assertive" aria-atomic="true" class="toast show me-4 mb-4" data-bs-autohide="true" style="position: fixed; bottom: 0; right: 0;">
+      <div class="toast-header">
+        <i class="fa-solid fa-circle {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} text-danger {% else %} text-success {% endif %} me-2"></i>
+        <strong class="me-auto">{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} Error {% else %} Success {% endif %}</strong>
+        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
+      </div>
+      <div class="toast-body">
+        {{ message }}
+      </div>
+    </div>
+    {% endfor %}
+    {% endif %}
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js" integrity="sha384-C6RzsynM9kWDrMNeT87bh95OGNyZPhcTNXj1NW7RuBCsyN/o0jlpcV8Qyq46cDfL" crossorigin="anonymous"></script>
+  </body>
+</html>

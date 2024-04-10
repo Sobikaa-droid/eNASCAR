@@ -1,0 +1,45 @@
+{% extends 'base.html' %}
+{% block title %}{{ racer.username }}{% endblock %}
+{% block content %}
+{% load widget_tweaks %}
+<div class="container mt-5" data-bs-theme="dark">
+  <div class="user_detail">
+    <div class="d-flex flex-wrap justify-content-center">
+      <div class='user_detail_info ms-5 w-50 mt-5 mb-5'>
+        <div class="d-flex">
+          <h1 class="flex-grow-1">{{ racer.username }} {% if racer.verified %}<i class="fa-solid fa-check text-danger"></i>{% endif %}</h1>
+          {% if request.user.pk == racer.pk %}
+          <a class="btn btn-outline-danger" href="">Edit</a>
+          {% endif %}
+        </div>
+        <hr class="text-danger">
+        <p class="page_description text-secondary lh-base text-break">
+          {{ racer.description|striptags|truncatechars:500 }}
+          {% if racer.description|length >= 501 %}
+          <a class="link-danger text-decoration-none" href="#" role="button" data-bs-toggle="modal" data-bs-target="#modal-show-description">
+          Read Full
+          </a>
+          {% endif %}
+        </p>
+        {% if racer.description|length >= 501 %}
+        <!-- Modal Show Description -->
+        <div class="modal fade" id="modal-show-description" tabindex="-1" aria-labelledby="DescriptionModalLabel" aria-hidden="true" data-bs-theme="dark">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title text-danger" id="ClearCartModalLabel">Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p class="text-light text-break">{{ racer.description }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- ############ -->
+        {% endif %}
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
