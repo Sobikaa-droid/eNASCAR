@@ -28,7 +28,8 @@ router.register(r'racers', RacerAPIViewSet, basename="racers")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('api-auth/', include('rest_framework.urls')),  # for DRF auth
+    path("__debug__/", include("debug_toolbar.urls")),
+    path('api-auth/', include('rest_framework.urls'), name='api-auth'),  # for DRF auth
     path('api/', include(router.urls)),
     path('', views.home, name='home'),
     path('racers/', include(('apps.racers.urls', 'racers'))),

@@ -13,7 +13,7 @@
               {% if not race.date_of_completion %}
               <small class="text-muted">{{ race.creation_date|timesince }} ago</small>
               {% else %}
-              <small class="text-muted">{{ race.date_of_completion|timesince }} ago</small>
+              <small class="text-muted">{{ race.completion_date|timesince }} ago</small>
               {% endif %}
             </div>
             <h4 class="mt-2">

@@ -20,22 +20,33 @@ class RacerSerializer(serializers.ModelSerializer):
         extra_kwargs = {'password': {'write_only': True}}
 
     def create(self, validated_data):
-        car_data = validated_data.pop('car')
+        car_data = validated_data['car']
         car_serializer = self.fields['car']
         car_instance = car_serializer.create(car_data)
         validated_data['car'] = car_instance
-        validated_data['password'] = make_password(validated_data['password'])
+        racer = Racer.objects.create(**validated_data)
+        racer.set_password(validated_data['password'])
+        racer.save()
 
-        return super().create(validated_data)
+        return racer
 
     def update(self, instance, validated_data):
-        car_data = validated_data.pop('car')
-        car_serializer = self.fields['car']
-        car_instance = instance.car
+        # Update racer instances with the validated data
+        instance.number = validated_data.get('number', instance.number)
+        instance.username = validated_data.get('username', instance.username)
+        instance.email = validated_data.get('email', instance.email)
+        instance.first_name = validated_data.get('first_name', instance.first_name)
+        instance.second_name = validated_data.get('second_name', instance.second_name)
+        instance.description = validated_data.get('description', instance.description)
+        instance.car = validated_data.get('car', instance.car)
 
-        car_serializer.update(car_instance, car_data)
+        # Check if password is provided and update it if necessary
+        password = validated_data.get('password')
+        if password:
+            instance.set_password(password)
 
-        return super().update(instance, validated_data)
+        instance.save()
+        return instance
 
     def to_representation(self, instance):
         representation = super().to_representation(instance)

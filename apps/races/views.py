@@ -1,4 +1,6 @@
+from django.contrib import messages
 from django.db.models import Count
+from django.shortcuts import redirect, get_object_or_404
 from django.views import generic
 from rest_framework import generics
 from rest_framework.response import Response
@@ -6,7 +8,6 @@ from rest_framework.response import Response
 from .models import Race
 from .serializers import RaceSerializer
 from .permissions import RacePermission
-
 
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
@@ -63,6 +64,28 @@ class RaceDetailView(generic.DetailView):
     #
     #     return context
 
+
+def apply_for_race(request, pk):
+    race = get_object_or_404(Race, pk=pk)
+    racers = race.racers.all()
+    numbers_of_racers = racers.values_list('number', flat=True)
+
+    if racers.count() < 40:
+        if request.user.number not in numbers_of_racers:
+            if request.user.first_name and request.user.second_name:
+                if request.user.car:
+                    race.racers.add(request.user)
+                    messages.success(request, f'Successfully applied for {race.name} race!')
+                else:
+                    messages.error(request, 'You dont have a car.')
+            else:
+                messages.error(request, 'You dont have a first/last name.')
+        else:
+            messages.error(request, 'Racer with this number already applied. Change your number.')
+    else:
+        messages.error(request, 'This race is packed.')
+
+    return redirect(request.META.get('HTTP_REFERER'))
 
 # class AddRacerToRaceView(generics.UpdateAPIView):
 #     serializer_class = RaceSerializer

@@ -1,24 +1,18 @@
+from rest_framework import permissions
 from rest_framework.permissions import BasePermission
 
 
 class RacerPermission(BasePermission):
     def has_permission(self, request, view):
-        if view.action in ['list', 'retrieve', 'create']:
+        if request.method in ['GET', 'POST', 'OPTIONS', 'HEAD']:
             return True
-        elif view.action in ['update', 'partial_update', 'destroy']:
-            return request.user.is_staff
-        else:
-            return False
+        elif request.method in ['PUT', 'PATCH', 'DELETE']:
+            return request.user and request.user.is_authenticated
 
     def has_object_permission(self, request, view, obj):
-        if request.user.username == obj.username or request.user.is_staff:
+        # if request.method in permissions.SAFE_METHODS:
+        #     return True
+        if request.method in ['GET', 'OPTIONS', 'HEAD']:
             return True
-        else:
-            if view.action == 'retrieve':
-                return True
-            elif view.action in ['partial_update']:
-                return set(request.data.keys()) == {'racer'} or request.user.is_staff
-            elif view.action in ['update', 'destroy']:
-                return request.user.is_staff
-            else:
-                return False
+        elif request.method in ['PUT', 'PATCH', 'DELETE']:
+            return request.user.is_staff or request.user == obj
