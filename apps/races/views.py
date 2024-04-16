@@ -21,7 +21,7 @@ class ListPagination(PageNumberPagination):
 
 
 class RaceAPIViewSet(viewsets.ModelViewSet):
-    queryset = Race.objects.all()
+    queryset = Race.objects.all().order_by('-pk')
     serializer_class = RaceSerializer
     permission_classes = [RacePermission]
     pagination_class = ListPagination
@@ -34,7 +34,7 @@ class RaceListView(generic.ListView):
     template_name = "races/races_list.html"
 
     def get_queryset(self):
-        qs = super().get_queryset()
+        qs = super().get_queryset().order_by('-pk')
         qs = qs.annotate(racers_count=Count('racers'))
 
         return qs
@@ -66,7 +66,7 @@ class RaceDetailView(generic.DetailView):
 
 
 def apply_for_race(request, pk):
-    race = get_object_or_404(Race, pk=pk)
+    race = Race.objects.get(pk=pk)
     racers = race.racers.all()
     numbers_of_racers = racers.values_list('number', flat=True)
 
@@ -87,23 +87,4 @@ def apply_for_race(request, pk):
 
     return redirect(request.META.get('HTTP_REFERER'))
 
-# class AddRacerToRaceView(generics.UpdateAPIView):
-#     serializer_class = RaceSerializer
-#     queryset = Race.objects.all()
-#
-#     def update(self, request, *args, **kwargs):
-#         race = self.get_object()
-#         racers_numbers = race.racers.values_list('number', flat=True)
-#         racer = request.user
-#         # if not racer.number:
-#         #     raise ValueError('You dont have a number')
-#         if not racer.car:
-#             raise ValueError('You dont have a car')
-#         if racer.number in racers_numbers:
-#             raise ValueError(f'The number {racer.number} is already registered to this race. Change your number.')
-#
-#         race.racers.add(request.user)
-#         race.save()
-#
-#         serializer = self.get_serializer(race)
-#         return Response(serializer.data)
+

@@ -28,7 +28,7 @@ class Racer(AbstractUser):
     car = models.OneToOneField(Car, on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:
-        ordering = ['pk']
+        ordering = ['-pk']
 
     def __str__(self):
         return f'{self.first_name} {self.second_name} ({self.username} {self.number})'

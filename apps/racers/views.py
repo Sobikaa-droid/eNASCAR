@@ -15,11 +15,10 @@ class ListPagination(PageNumberPagination):
 
 
 class RacerAPIViewSet(viewsets.ModelViewSet):
-    queryset = Racer.objects.all()
+    queryset = Racer.objects.filter(is_staff=False).order_by('-pk')
     serializer_class = RacerSerializer
     permission_classes = (RacerPermission, )
     pagination_class = ListPagination
-
 
 
 class RacerListView(generic.ListView):
@@ -27,6 +26,10 @@ class RacerListView(generic.ListView):
     context_object_name = 'racers'
     paginate_by = 15
     template_name = "racers/racers_list.html"
+
+    def get_queryset(self):
+        qs = super().get_queryset().filter(is_staff=False).order_by('-pk')
+        return qs
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -39,3 +42,7 @@ class RacerDetailView(generic.DetailView):
     model = Racer
     context_object_name = 'racer'
     template_name = 'racers/racer_detail.html'
+
+    def get_queryset(self):
+        qs = super().get_queryset().filter(is_staff=False)
+        return qs

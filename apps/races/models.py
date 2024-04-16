@@ -12,7 +12,7 @@ class Race(models.Model):
     racers = models.ManyToManyField(Racer, blank=True)
 
     class Meta:
-        ordering = ['pk']
+        ordering = ['-pk']
 
     def __str__(self):
         return self.name
