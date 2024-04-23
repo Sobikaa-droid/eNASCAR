@@ -49,11 +49,11 @@
 }
 
 .nav-link-active {
-  color: #dc3545 !important;
+  color: #e50027 !important;
 }
 
 .nav_link_base:focus, .nav_link_base:hover {
-    color: #dc3545;
+    color: #e50027;
 }
 
 .navbar-toggler {
@@ -71,15 +71,15 @@
     --bs-pagination-bg: transparent;
     --bs-pagination-border-color: #d9d9d9;
     --bs-pagination-font-size: 1.2rem;
-    --bs-pagination-color: #dc3545;
+    --bs-pagination-color: #e50027;
     --bs-pagination-hover-color: white;
-    --bs-pagination-hover-bg: #dc3545;
-    --bs-pagination-hover-border-color: #dc3545;
+    --bs-pagination-hover-bg: #e50027;
+    --bs-pagination-hover-border-color: #e50027;
     --bs-pagination-focus-color: white;
-    --bs-pagination-focus-bg: #dc3545;
+    --bs-pagination-focus-bg: #e50027;
     --bs-pagination-active-color: white;
-    --bs-pagination-active-bg: #dc3545;
-    --bs-pagination-active-border-color: #dc3545;
+    --bs-pagination-active-bg: #e50027;
+    --bs-pagination-active-border-color: #e50027;
     --bs-pagination-disabled-bg: transparent;
     --bs-pagination-disabled-border-color: #d9d9d9;
 }

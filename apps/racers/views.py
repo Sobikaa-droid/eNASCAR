@@ -1,3 +1,5 @@
+from django.contrib.auth.views import LogoutView
+from django.urls import reverse_lazy
 from django.views import generic
 from rest_framework import generics, viewsets, mixins, permissions
 from rest_framework.pagination import PageNumberPagination
@@ -46,3 +48,7 @@ class RacerDetailView(generic.DetailView):
     def get_queryset(self):
         qs = super().get_queryset().filter(is_staff=False)
         return qs
+
+
+class RacerLogoutView(LogoutView):
+    next_page = reverse_lazy('home')

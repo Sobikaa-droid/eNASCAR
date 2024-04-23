@@ -23,8 +23,7 @@ class Racer(AbstractUser):
     first_name = models.CharField(max_length=100)
     second_name = models.CharField(max_length=100)
     description = models.TextField(max_length=1500, null=True, blank=True)
-    wins = models.IntegerField(default=0)
-    loses = models.IntegerField(default=0)
+    score = models.DecimalField(default=0, max_digits=100, decimal_places=2)
     car = models.OneToOneField(Car, on_delete=models.SET_NULL, null=True, blank=True)
 
     class Meta:

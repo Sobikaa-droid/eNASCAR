@@ -15,9 +15,9 @@ class RacerSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Racer
-        fields = ['id', 'number', 'username', 'password', 'first_name', 'second_name', 'description', 'wins', 'loses',
-                  'car']
+        fields = ['id', 'number', 'username', 'password', 'first_name', 'second_name', 'description', 'score', 'car']
         extra_kwargs = {'password': {'write_only': True}}
+        read_only_fields = ('score', )
 
     def create(self, validated_data):
         car_data = validated_data['car']

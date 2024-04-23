@@ -1,11 +1,14 @@
 {% extends 'base.html' %}
-{% block title %}Racers{% endblock %}
+{% block title %}{{ race.name }} racers{% endblock %}
 {% block content %}
 <div class="grey_container">
   <div class="container mt-5 mb-5 w-50">
     <div class="bd-masthead mt-5" id="content">
+      <div class='text-center'>
+        <h1 class="mb-4">{{ race.name }} racers</h1>
+      </div>
       <div class="list-group mb-5 mt-5">
-        {% for racer in racers %}
+        {% for racer in race.racers.all %}
         <a href="{{ racer.get_absolute_url }}" class="list-group-item list-group-item-action">
           <div class="d-flex align-middle">
             <div class="me-auto">

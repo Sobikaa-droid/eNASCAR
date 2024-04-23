@@ -9,8 +9,8 @@
         <a href="{{ race.get_absolute_url }}" class="list-group-item list-group-item-action">
           <div class="d-flex align-middle">
             <div class="me-auto">
-              <h5 class="mb-1 mt-1">{{ race.name }} <span class="badge rounded-pill bg-primary">{{ race.racers_count }}/40</span></h5>
-              {% if not race.date_of_completion %}
+              <h5 class="mb-1 mt-1">{{ race.name }} <span class="badge rounded-pill bg-primary">{{ race.racers_count }}/{{ race.race_limit }}</span></h5>
+              {% if not race.completion_date %}
               <small class="text-muted">{{ race.creation_date|timesince }} ago</small>
               {% else %}
               <small class="text-muted">{{ race.completion_date|timesince }} ago</small>

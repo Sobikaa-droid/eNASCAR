@@ -34,10 +34,7 @@ class RaceListView(generic.ListView):
     template_name = "races/races_list.html"
 
     def get_queryset(self):
-        qs = super().get_queryset().order_by('-pk')
-        qs = qs.annotate(racers_count=Count('racers'))
-
-        return qs
+        return super().get_queryset().order_by('-pk').annotate(racers_count=Count('racers'))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -50,19 +47,20 @@ class RaceDetailView(generic.DetailView):
     context_object_name = 'race'
     template_name = 'races/race_detail.html'
 
-    def get_object(self, queryset=None):
-        pk = self.kwargs.get('pk')
-        race_object = Race.objects.prefetch_related('racers').get(pk=pk)
 
-        return race_object
+class RaceRacersListView(generic.DetailView):
+    model = Race
+    context_object_name = 'race'
+    template_name = 'races/race_racers_list.html'
 
-    # def get_context_data(self, **kwargs):
-    #     context = super().get_context_data(**kwargs)
+    def get_queryset(self):
+        return super().get_queryset().prefetch_related('racers')
+
+    # def get_object(self, queryset=None):
     #     pk = self.kwargs.get('pk')
-    #     obj = self.get_queryset().filter(pk=pk)
-    #     context['racers_count'] = obj.racers_set.count()
+    #     race_object = Race.objects.prefetch_related('racers').get(pk=pk)
     #
-    #     return context
+    #     return race_object
 
 
 def apply_for_race(request, pk):
@@ -70,12 +68,13 @@ def apply_for_race(request, pk):
     racers = race.racers.all()
     numbers_of_racers = racers.values_list('number', flat=True)
 
-    if racers.count() < 40:
+    if racers.count() < race.race_limit:
         if request.user.number not in numbers_of_racers:
             if request.user.first_name and request.user.second_name:
                 if request.user.car:
                     race.racers.add(request.user)
                     messages.success(request, f'Successfully applied for {race.name} race!')
+                    Race.objects.complete_race(pk=pk)
                 else:
                     messages.error(request, 'You dont have a car.')
             else:

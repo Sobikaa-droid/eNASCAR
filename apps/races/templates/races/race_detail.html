@@ -6,26 +6,49 @@
   <div class="">
     <div class="d-flex flex-wrap justify-content-center">
       <div class="col">
-        <h4 class="d-flex justify-content-between align-items-center mb-3">
+        <h4 class="d-flex justify-content-between align-items-center mb-2">
           <span>{{ race.name }}</span>
-              {% if not race.date_of_completion %}
-              <span class="badge rounded-pill bg-success mt-1">ACTIVE</span>
+              {% if not race.completion_date %}
+              <span class="badge bg-success mt-1">ACTIVE</span>
               {% else %}
-              <span class="badge rounded-pill bg-secondary">OVER</span>
+              <span class="badge bg-secondary">OVER</span>
               {% endif %}
         </h4>
+        <p class="page_description text-secondary lh-base text-break mb-3">
+          {{ race.description|striptags|truncatechars:200 }}
+          {% if race.description|length >= 201 %}
+          <a class="link-danger text-decoration-none" href="#" role="button" data-bs-toggle="modal" data-bs-target="#modal-show-description">
+          Read Full
+          </a>
+          {% endif %}
+        </p>
+        {% if race.description|length >= 201 %}
+        <!-- Modal Show Description -->
+        <div class="modal fade" id="modal-show-description" tabindex="-1" aria-labelledby="DescriptionModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="ClearCartModalLabel">Description</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p class="text-break">{{ race.description }}</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- ############ -->
+        {% endif %}
         <ul class="list-group">
           <li class="list-group-item d-flex justify-content-between">
-            <span>Description</span>
-            <strong>NAME</strong>
-          </li>
-          <li class="list-group-item d-flex justify-content-between">
-            <span>Racers</span>
-            <strong>{{ race.racers.count }}/40</strong>
+            <span><a href="{% url 'races:race_racers_list' race.pk %}" class="link-danger text-decoration-none">Racers</a></span>
+            <strong>{{ race.racers.count }}/{{ race.race_limit }}</strong>
           </li>
         </ul>
         <div class="d-flex justify-content-between align-items-center mt-3">
+          {% if not race.completion_date %}
           <a href="{% url 'races:apply_for_race' race.pk %}" class="btn btn-outline-danger">Apply</a>
+          {% endif %}
           <small class="text-muted">{{ race.creation_date|timesince }} ago</small>
         </div>
       </div>
