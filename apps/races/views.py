@@ -5,7 +5,7 @@ from django.views import generic
 from rest_framework import generics
 from rest_framework.response import Response
 
-from .models import Race
+from .models import Race, RaceEntry
 from .serializers import RaceSerializer
 from .permissions import RacePermission
 
@@ -67,8 +67,9 @@ def apply_for_race(request, pk):
     race = Race.objects.get(pk=pk)
     racers = race.racers.all()
     numbers_of_racers = racers.values_list('number', flat=True)
+    racers_count = racers.count()
 
-    if racers.count() < race.race_limit:
+    if racers_count < race.race_limit:
         if request.user.number not in numbers_of_racers:
             if request.user.first_name and request.user.second_name:
                 if request.user.car:
@@ -83,6 +84,17 @@ def apply_for_race(request, pk):
             messages.error(request, 'Racer with this number already applied. Change your number.')
     else:
         messages.error(request, 'This race is packed.')
+
+    return redirect(request.META.get('HTTP_REFERER'))
+
+
+def cancel_application_for_race(request, pk):
+    race = Race.objects.get(pk=pk)
+    racers = race.racers
+
+    if request.user in racers.all() and not race.completion_date:
+        racers.remove(request.user)
+        messages.success(request, f'Successfully cancelled application for {race.name} race')
 
     return redirect(request.META.get('HTTP_REFERER'))
 

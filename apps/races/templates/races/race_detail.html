@@ -47,7 +47,11 @@
         </ul>
         <div class="d-flex justify-content-between align-items-center mt-3">
           {% if not race.completion_date %}
+          {% if request.user not in race.racers.all %}
           <a href="{% url 'races:apply_for_race' race.pk %}" class="btn btn-outline-danger">Apply</a>
+          {% else %}
+          <a href="{% url 'races:cancel_race' race.pk %}" class="btn btn-outline-danger">Cancel</a>
+          {% endif %}
           {% endif %}
           <small class="text-muted">{{ race.creation_date|timesince }} ago</small>
         </div>
