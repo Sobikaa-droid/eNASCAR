@@ -1,12 +1,16 @@
+from django.contrib import messages
+from django.contrib.auth import login, authenticate
+from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LogoutView
 from django.urls import reverse_lazy
 from django.views import generic
-from rest_framework import generics, viewsets, mixins, permissions
+from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
 
 from .models import Racer
 from .serializers import RacerSerializer
 from .permissions import RacerPermission
+from .forms import RacerCreateForm
 
 
 # pagination class
@@ -48,6 +52,43 @@ class RacerDetailView(generic.DetailView):
     def get_queryset(self):
         qs = super().get_queryset().filter(is_staff=False)
         return qs
+
+
+class RacerRegisterView(generic.FormView):
+    form_class = RacerCreateForm
+    success_url = reverse_lazy('home')
+    template_name = 'racers/register.html'
+
+    def form_valid(self, form):
+        form.save()
+        new_user = authenticate(
+            username=form.cleaned_data['username'],
+            password=form.cleaned_data['password1'],
+        )
+        login(self.request, new_user)
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, form.errors)
+
+        return super().form_invalid(form)
+
+
+class RacerLoginView(generic.FormView):
+    form_class = AuthenticationForm
+    success_url = reverse_lazy('home')
+    template_name = 'racers/login.html'
+
+    def form_valid(self, form):
+        login(self.request, form.get_user())
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, form.errors)
+
+        return super().form_invalid(form)
 
 
 class RacerLogoutView(LogoutView):

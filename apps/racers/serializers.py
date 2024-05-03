@@ -1,29 +1,20 @@
 from rest_framework import serializers
-from django.contrib.auth.hashers import make_password
 
-from .models import Car, Racer
-
-
-class CarSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Car
-        fields = '__all__'
+from .models import Racer
 
 
 class RacerSerializer(serializers.ModelSerializer):
-    car = CarSerializer()
-
     class Meta:
         model = Racer
-        fields = ['id', 'number', 'username', 'password', 'first_name', 'second_name', 'description', 'score', 'car']
+        fields = ['id', 'number', 'username', 'password', 'first_name', 'second_name', 'description', 'score']
         extra_kwargs = {'password': {'write_only': True}}
         read_only_fields = ('score', )
 
     def create(self, validated_data):
-        car_data = validated_data['car']
-        car_serializer = self.fields['car']
-        car_instance = car_serializer.create(car_data)
-        validated_data['car'] = car_instance
+        # car_data = validated_data['car']
+        # car_serializer = self.fields['car']
+        # car_instance = car_serializer.create(car_data)
+        # validated_data['car'] = car_instance
         racer = Racer.objects.create(**validated_data)
         racer.set_password(validated_data['password'])
         racer.save()
@@ -38,7 +29,6 @@ class RacerSerializer(serializers.ModelSerializer):
         instance.first_name = validated_data.get('first_name', instance.first_name)
         instance.second_name = validated_data.get('second_name', instance.second_name)
         instance.description = validated_data.get('description', instance.description)
-        instance.car = validated_data.get('car', instance.car)
 
         # Check if password is provided and update it if necessary
         password = validated_data.get('password')
@@ -47,9 +37,3 @@ class RacerSerializer(serializers.ModelSerializer):
 
         instance.save()
         return instance
-
-    def to_representation(self, instance):
-        representation = super().to_representation(instance)
-        representation['car'] = CarSerializer(instance.car).data
-
-        return representation

@@ -61,7 +61,9 @@
 }
 
 .user_detail {
-  box-shadow: 0 0 20px 5px #d9d9d9;
+  border-style: solid;
+  border-color: #dee2e6;
+  border-width: 1px;
   border-radius: 10px 10px 10px 10px;
 }
 

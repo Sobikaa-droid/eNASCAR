@@ -15,23 +15,16 @@ Including another URLconf
     2. Add a URL to urlpatterns:  path('blog/', include('blog.urls'))
 """
 from django.contrib import admin
-from django.urls import path, re_path, include
-from rest_framework import routers
+from django.urls import path, include
 
-from apps.races.views import RaceAPIViewSet
-from apps.racers.views import RacerAPIViewSet
 from . import views
-
-router = routers.DefaultRouter()
-router.register(r'races', RaceAPIViewSet, basename="races")
-router.register(r'racers', RacerAPIViewSet, basename="racers")
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path("__debug__/", include("debug_toolbar.urls")),
     path('api-auth/', include('rest_framework.urls'), name='api-auth'),  # for DRF auth
-    path('api/', include(router.urls)),
     path('', views.home, name='home'),
     path('racers/', include(('apps.racers.urls', 'racers'))),
     path('races/', include(('apps.races.urls', 'races'))),
+    path('cars/', include(('apps.cars.urls', 'cars'))),
 ]

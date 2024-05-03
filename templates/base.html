@@ -30,12 +30,17 @@
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0 mt-2">
             {% if request.user.is_authenticated %}
             <li class="nav-item dropdown">
+              {% if not request.user.car %}
+              <a href='{% url "cars:car_create" %}' class="btn btn-outline-danger me-4">
+                Get car
+              </a>
+              {% endif %}
               <a class="nav-link nav_link_base" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-toggle="dropdown">
               {{ request.user.username }} ({% if request.user.is_staff %}STAFF{% else %}#{{ request.user.number }}{% endif %})
               </a>
               <ul class="dropdown-menu site-menu">
                 <li class="ms-4">
-                  <a class="nav-link nav_link_base {% if request.path == '/u/'|add:user.slug|add:'/' %} text-danger {% endif %}" href="" aria-current="page" type='submit'>Profile</a>
+                  <a class="nav-link nav_link_base {% if request.path == '/u/'|add:user.slug|add:'/' %} text-danger {% endif %}" href="{{ request.user.get_absolute_url }}" aria-current="page" type='submit'>Profile</a>
                 </li>
                 <li>
                   <hr>
@@ -54,10 +59,10 @@
               </a>
               <ul class="dropdown-menu site-menu">
                 <li class="ms-4">
-                  <a class="nav-link nav_link_base nav-link-grow-up {% if request.path == '/u/login/' %} text-danger {% endif %}" href="" aria-current="page" type='submit'>Log In</a>
+                  <a class="nav-link nav_link_base nav-link-grow-up {% if request.path == '/racer/login/' %} text-danger {% endif %}" href="{% url 'racers:login'%}" aria-current="page" type='submit'>Log In</a>
                 </li>
                 <li class="ms-4">
-                  <a class="nav-link nav_link_base nav-link-grow-up {% if request.path == '/u/register/' %} text-danger {% endif %}" href="" aria-current="page" type='submit'>Sign Up</a>
+                  <a class="nav-link nav_link_base nav-link-grow-up {% if request.path == '/racer/register/' %} text-danger {% endif %}" href="{% url 'racers:register'%}" aria-current="page" type='submit'>Sign Up</a>
                 </li>
               </ul>
             </li>

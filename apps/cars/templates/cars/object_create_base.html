@@ -1,0 +1,22 @@
+{% extends 'base.html' %}
+{% block title %}Get {{ object_name }}{% endblock %}
+{% block content %}
+{% load widget_tweaks %}
+<div class="container mt-5 mb-5">
+  <div class="user_detail d-flex flex-wrap justify-content-center">
+    <div class='user_detail_info ms-5 w-50 mt-5 mb-5'>
+      <h1 class="text-center">Get {{ object_name }}</h1>
+      <form method="POST" enctype="multipart/form-data"> {% csrf_token %}
+        {% for field in form %}
+        <div class="mb-3">
+          <label class="form-label">{{ field.label_tag }}</label>
+          {% render_field field class="form-control" %}
+          <div class="form-text">{{ field.help_text }}</div>
+        </div>
+        {% endfor %}
+        <button class="btn btn-outline-danger me-auto" type="submit">Apply</button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

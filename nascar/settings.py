@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     "debug_toolbar",
     'apps.racers',
     'apps.races',
+    'apps.cars',
 ]
 
 MIDDLEWARE = [
@@ -136,9 +137,11 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 AUTH_USER_MODEL = "racers.Racer"
 
-# AUTHENTICATION_BACKENDS = [
-#        'django.contrib.auth.backends.ModelBackend',  # For session authentication
-# ]
+SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+AUTHENTICATION_BACKENDS = [
+    'django.contrib.auth.backends.ModelBackend',
+]
 
 REST_FRAMEWORK = {
     # Use Django's standard `django.contrib.auth` permissions,
