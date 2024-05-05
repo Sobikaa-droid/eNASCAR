@@ -31,20 +31,15 @@ class RacerCreateForm(UserCreationForm):
         return racer
 
 
-# class RacerUpdateForm(forms.ModelForm):
-#     number = forms.IntegerField(required=True, min_value=1, max_value=99)
-#     first_name = forms.CharField(required=True, max_length=100)
-#     second_name = forms.CharField(required=True, max_length=100)
-#
-#     class Meta:
-#         model = Racer
-#         fields = ["username", 'description', "password1", "password2"]
-#
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.car_formset = RacerCarFormSet(instance=self.instance)
-#         self.label_suffix = ""  # Removes ':' as label suffix
-#
-#     def __init__(self, *args, **kwargs):
-#         super().__init__(*args, **kwargs)
-#         self.label_suffix = ""  # Removes ':' as label suffix
+class RacerUpdateForm(forms.ModelForm):
+    number = forms.IntegerField(required=True, min_value=1, max_value=99)
+    first_name = forms.CharField(required=True, max_length=100)
+    second_name = forms.CharField(required=True, max_length=100)
+
+    class Meta:
+        model = Racer
+        fields = ["username", 'number', 'first_name', 'second_name', 'description',]
+
+    def __init__(self, *args, **kwargs):
+        super().__init__(*args, **kwargs)
+        self.label_suffix = ""  # Removes ':' as label suffix

@@ -5,13 +5,14 @@
 <div class="container mt-5" data-bs-theme="dark">
   <div class="user_detail">
     <div class="d-flex flex-wrap justify-content-center">
-      <div class='user_detail_info ms-5 w-50 mt-5 mb-5'>
+      <div class='user_detail_info ms-5 w-100 mt-5 mb-5 me-5'>
         <div class="d-flex">
-          <h1 class="flex-grow-1">{{ racer.username }} {% if racer.verified %}<i class="fa-solid fa-check text-danger"></i>{% endif %}</h1>
+          <h1 class="flex-grow-1">{{ racer.username }}</h1>
           {% if request.user.pk == racer.pk %}
-          <a class="btn btn-outline-danger" href="">Edit</a>
+          <a class="btn btn-outline-danger" href="{% url 'racers:racer_update' request.user.pk %}">Update</a>
           {% endif %}
         </div>
+        {{ racer.first_name }} {{ racer.second_name }}
         <hr class="text-danger">
         <p class="page_description text-secondary lh-base text-break">
           {{ racer.description|striptags|truncatechars:500 }}

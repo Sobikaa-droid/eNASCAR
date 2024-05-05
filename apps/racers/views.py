@@ -10,7 +10,7 @@ from rest_framework.pagination import PageNumberPagination
 from .models import Racer
 from .serializers import RacerSerializer
 from .permissions import RacerPermission
-from .forms import RacerCreateForm
+from .forms import RacerCreateForm, RacerUpdateForm
 
 
 # pagination class
@@ -52,6 +52,30 @@ class RacerDetailView(generic.DetailView):
     def get_queryset(self):
         qs = super().get_queryset().filter(is_staff=False)
         return qs
+
+
+class RacerUpdateView(generic.UpdateView):
+    model = Racer
+    form_class = RacerUpdateForm
+    template_name = 'racers/racer_update.html'
+
+    def get_object(self, queryset=None):
+        racer = super().get_queryset().get(pk=self.request.user.pk)
+
+        return racer
+
+    def form_valid(self, form):
+        messages.success(self.request, f'Profile has been updated.')
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, form.errors)
+
+        return super().form_invalid(form)
+
+    def get_success_url(self):
+        return self.object.get_absolute_url()
 
 
 class RacerRegisterView(generic.FormView):

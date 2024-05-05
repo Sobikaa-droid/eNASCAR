@@ -1,0 +1,27 @@
+{% extends 'base.html' %}
+{% block title %}{{ racer.username }} update{% endblock %}
+{% block content %}
+{% load widget_tweaks %}
+<div class="container mt-5 mb-5 w-50">
+  <div class="user_detail">
+    <div class="d-flex flex-wrap justify-content-center">
+      <div class='user_detail_info ms-5 w-50 mt-5 mb-5'>
+        <form method="POST" enctype="multipart/form-data">
+          {% csrf_token %}
+          {% for field in form %}
+          <div class="mb-3">
+            <label class="form-label">{{ field.label_tag }}</label>
+            {% render_field field class="form-control" placeholder=field.label %}
+            <div class="form-text">{{ field.help_text }}</div>
+          </div>
+          {% endfor %}
+          <button id='save_song' style="visibility: hidden;" type="submit">Save</button>
+        </form>
+        <div class="d-flex">
+          <button class="btn btn-outline-danger me-auto" onclick="document.getElementById('save_song').click();">Save</button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}
