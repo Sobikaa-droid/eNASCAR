@@ -1,11 +1,9 @@
 from django.contrib import messages
 from django.db.models import Count
-from django.shortcuts import redirect, get_object_or_404
+from django.shortcuts import redirect
 from django.views import generic
-from rest_framework import generics
-from rest_framework.response import Response
 
-from .models import Race, RaceEntry
+from .models import Race
 from .serializers import RaceSerializer
 from .permissions import RacePermission
 

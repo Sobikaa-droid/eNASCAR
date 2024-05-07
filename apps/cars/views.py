@@ -1,11 +1,17 @@
 from django.contrib import messages
 from django.views import generic
-from rest_framework import generics
+from rest_framework import generics, viewsets
 
-from .models import Car
+from .models import Car, CarModel
 from .forms import CarForm
-from .permissions import CarPermission
-from .serializers import CarSerializer
+from .permissions import CarPermission, CarModelPermission
+from .serializers import CarSerializer, CarModelSerializer
+
+
+class CarModelAPIViewSet(viewsets.ModelViewSet):
+    queryset = CarModel.objects.all().order_by('-pk')
+    serializer_class = CarModelSerializer
+    permission_classes = [CarModelPermission]
 
 
 class CarAPICreateView(generics.CreateAPIView):

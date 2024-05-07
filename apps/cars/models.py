@@ -8,7 +8,7 @@ class CarModel(models.Model):
     year = models.DateField()
 
     class Meta:
-        ordering = ['pk']
+        ordering = ['-pk']
 
     def __str__(self):
         return f'{self.name} ({self.speed})'
@@ -20,7 +20,7 @@ class Car(models.Model):
     racer = models.OneToOneField(Racer, on_delete=models.CASCADE)
 
     class Meta:
-        ordering = ['pk']
+        ordering = ['-pk']
 
     def __str__(self):
         return self.car_model

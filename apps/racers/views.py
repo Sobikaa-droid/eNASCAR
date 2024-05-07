@@ -23,7 +23,7 @@ class ListPagination(PageNumberPagination):
 class RacerAPIViewSet(viewsets.ModelViewSet):
     queryset = Racer.objects.filter(is_staff=False).order_by('-pk')
     serializer_class = RacerSerializer
-    permission_classes = (RacerPermission, )
+    permission_classes = [RacerPermission]
     pagination_class = ListPagination
 
 
