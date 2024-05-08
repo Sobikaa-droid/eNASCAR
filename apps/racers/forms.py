@@ -11,7 +11,7 @@ class RacerCreateForm(UserCreationForm):
 
     class Meta:
         model = Racer
-        fields = ["username", 'description', "password1", "password2"]
+        fields = ["username", 'description', "password1", "password2", 'year_of_birth', 'stance']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -26,6 +26,8 @@ class RacerCreateForm(UserCreationForm):
         racer.number = self.cleaned_data['number']
         racer.first_name = self.cleaned_data['first_name']
         racer.second_name = self.cleaned_data['second_name']
+        racer.year_of_birth = self.cleaned_data['year_of_birth']
+        racer.stance = self.cleaned_data['stance']
         if commit:
             racer.save()
         return racer
@@ -38,7 +40,7 @@ class RacerUpdateForm(forms.ModelForm):
 
     class Meta:
         model = Racer
-        fields = ["username", 'number', 'first_name', 'second_name', 'description',]
+        fields = ["username", 'number', 'first_name', 'second_name', 'description', 'year_of_birth', 'stance']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

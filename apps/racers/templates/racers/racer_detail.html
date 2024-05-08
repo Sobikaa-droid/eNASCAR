@@ -5,40 +5,52 @@
 <div class="container mt-5" data-bs-theme="dark">
   <div class="user_detail">
     <div class="d-flex flex-wrap justify-content-center">
-      <div class='user_detail_info ms-5 w-100 mt-5 mb-5 me-5'>
+      <div class='user_detail_info ms-5 w-50 mt-5 mb-5 me-5'>
         <div class="d-flex">
-          <h1 class="flex-grow-1">{{ racer.username }}</h1>
-          {% if request.user.pk == racer.pk %}
-          <a class="btn btn-outline-danger" href="{% url 'racers:racer_update' request.user.pk %}">Update</a>
-          {% endif %}
+          <div class="flex-grow-1">
+            <h1>{{ racer.username }}</h1>
+            <h6 class="text-secondary">{{ racer.first_name }} {{ racer.second_name }}</h6>
+          </div>
+          <div class="border border-dark rounded">
+            <div class="bg-dark text-light text-center">SCORE</div>
+            <div class="p-2"><h3>{{ racer.score }}</h3></div>
+          </div>
         </div>
-        {{ racer.first_name }} {{ racer.second_name }}
-        <hr class="text-danger">
+        <hr class="text-secondary">
         <p class="page_description text-secondary lh-base text-break">
-          {{ racer.description|striptags|truncatechars:500 }}
-          {% if racer.description|length >= 501 %}
+          {{ racer.description|striptags|truncatechars:400 }}
+          {% if racer.description|length >= 401 %}
           <a class="link-danger text-decoration-none" href="#" role="button" data-bs-toggle="modal" data-bs-target="#modal-show-description">
           Read Full
           </a>
           {% endif %}
         </p>
-        {% if racer.description|length >= 501 %}
+        {% if racer.description|length >= 401 %}
         <!-- Modal Show Description -->
-        <div class="modal fade" id="modal-show-description" tabindex="-1" aria-labelledby="DescriptionModalLabel" aria-hidden="true" data-bs-theme="dark">
+        <div class="modal fade" id="modal-show-description" tabindex="-1" aria-labelledby="DescriptionModalLabel" aria-hidden="true" data-bs-theme="light">
           <div class="modal-dialog modal-dialog-centered">
             <div class="modal-content">
               <div class="modal-header">
-                <h5 class="modal-title text-danger" id="ClearCartModalLabel">Description</h5>
+                <h5 class="modal-title" id="ClearCartModalLabel">Description</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <p class="text-light text-break">{{ racer.description }}</p>
+                <p class="text-secondary text-break">{{ racer.description }}</p>
               </div>
             </div>
           </div>
         </div>
         <!-- ############ -->
         {% endif %}
+        <hr class="text-secondary">
+        <table class="table">
+          <tbody>
+            <tr>
+              <th scope="row">{{ racer. }}</th>
+              <td>Mark</td>
+            </tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
