@@ -8,7 +8,13 @@
       <div class='user_detail_info ms-5 w-50 mt-5 mb-5 me-5'>
         <div class="d-flex">
           <div class="flex-grow-1">
-            <h1>{{ racer.username }}</h1>
+            <h1>{{ racer.username }}
+            {% if racer == request.user %}
+              <a href='{% url "racers:racer_update" request.user.pk %}' class="btn btn-outline-danger me-4">
+                Edit
+              </a>
+            {% endif %}
+            </h1>
             <h6 class="text-secondary">{{ racer.first_name }} {{ racer.second_name }}</h6>
           </div>
           <div class="border border-dark rounded">
@@ -16,7 +22,7 @@
             <div class="p-2"><h3>{{ racer.score }}</h3></div>
           </div>
         </div>
-        <hr class="text-secondary">
+        <div class="separator mb-2">Description</div>
         <p class="page_description text-secondary lh-base text-break">
           {{ racer.description|striptags|truncatechars:400 }}
           {% if racer.description|length >= 401 %}
@@ -42,13 +48,58 @@
         </div>
         <!-- ############ -->
         {% endif %}
-        <hr class="text-secondary">
-        <table class="table">
+        <div class="separator mb-2">Info</div>
+        <table class="table table-borderless" data-bs-theme="light">
           <tbody>
             <tr>
-              <th scope="row">{{ racer. }}</th>
-              <td>Mark</td>
+              <th scope="row">Number</th>
+              <td>{{ racer.number }}</td>
             </tr>
+            <tr>
+              <th scope="row">Car</th>
+              <td>{{ racer.car.car_model.name }}, {{ racer.car.color }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Country</th>
+              <td>{{ racer.country }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Active since</th>
+              <td>{{ racer.active_since }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Year of birth</th>
+              <td>{{ racer.year_of_birth }}</td>
+            </tr>
+            <tr>
+              <th scope="row">Stance</th>
+              <td>{{ racer.stance }}</td>
+            </tr>
+          </tbody>
+        </table>
+        <div class="separator mb-2">Races</div>
+        <table class="table" data-bs-theme="light">
+          <thead>
+            <tr>
+              <th scope="col">Name</th>
+              <th scope="col">Racers</th>
+              <th scope="col">Status</th>
+            </tr>
+          </thead>
+          <tbody class="">
+            {% for race in racer.race_set.all %}
+            <tr>
+              <th scope="row"><a class="link link-danger text-decoration-none" href="{{ race.get_absolute_url }}">{{ race.name }}</a></th>
+              <td>{{ race.racers.count }}/{{ race.race_limit }}</td>
+              <td>
+                {% if not race.completion_date %}
+                <span class="badge bg-success">ACTIVE</span>
+                {% else %}
+                <span class="badge bg-secondary">OVER</span>
+                {% endif %}
+              </td>
+            </tr>
+            {% endfor %}
           </tbody>
         </table>
       </div>

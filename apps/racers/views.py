@@ -50,7 +50,7 @@ class RacerDetailView(generic.DetailView):
     template_name = 'racers/racer_detail.html'
 
     def get_queryset(self):
-        qs = super().get_queryset().filter(is_staff=False)
+        qs = super().get_queryset().select_related('car').filter(is_staff=False)
         return qs
 
 

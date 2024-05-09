@@ -5,13 +5,10 @@ from .models import Racer
 
 
 class RacerCreateForm(UserCreationForm):
-    number = forms.IntegerField(required=True, min_value=1, max_value=99)
-    first_name = forms.CharField(required=True, max_length=100)
-    second_name = forms.CharField(required=True, max_length=100)
-
     class Meta:
         model = Racer
-        fields = ["username", 'description', "password1", "password2", 'year_of_birth', 'stance']
+        fields = ["username", 'number', 'first_name', 'second_name', 'description', "password1", "password2",
+                  'country', 'year_of_birth', 'stance']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -20,6 +17,10 @@ class RacerCreateForm(UserCreationForm):
         self.fields['username'].help_text = 'Letters, numbers and @/./+/-/_ only.'
         self.fields['password1'].help_text = '8-20 characters, letters and numbers, no spaces.'
         self.fields['password2'].help_text = None
+
+        for field_name, field in self.fields.items():
+            if field.required:
+                field.label = f'{field.label}*'
 
     def save(self, commit=True):
         racer = super().save(commit=False)
@@ -34,13 +35,10 @@ class RacerCreateForm(UserCreationForm):
 
 
 class RacerUpdateForm(forms.ModelForm):
-    number = forms.IntegerField(required=True, min_value=1, max_value=99)
-    first_name = forms.CharField(required=True, max_length=100)
-    second_name = forms.CharField(required=True, max_length=100)
-
     class Meta:
         model = Racer
-        fields = ["username", 'number', 'first_name', 'second_name', 'description', 'year_of_birth', 'stance']
+        fields = ["username", 'number', 'first_name', 'second_name', 'description', 'country', 'year_of_birth',
+                  'stance']
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)

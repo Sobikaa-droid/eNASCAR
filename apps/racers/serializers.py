@@ -7,7 +7,7 @@ class RacerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Racer
         fields = ['id', 'number', 'username', 'password', 'first_name', 'second_name', 'description', 'score',
-                  'active_since', 'year_of_birth', 'stance']
+                  'country', 'active_since', 'year_of_birth', 'stance']
         extra_kwargs = {'password': {'write_only': True}}
         read_only_fields = ('score', 'active_since')
 
@@ -31,6 +31,7 @@ class RacerSerializer(serializers.ModelSerializer):
         instance.second_name = validated_data.get('second_name', instance.second_name)
         instance.description = validated_data.get('description', instance.description)
         instance.year_of_birth = validated_data.get('year_of_birth', instance.year_of_birth)
+        instance.country = validated_data.get('country', instance.year_of_birth)
         instance.stance = validated_data.get('stance', instance.stance)
 
         # Check if password is provided and update it if necessary

@@ -85,3 +85,29 @@
     --bs-pagination-disabled-bg: transparent;
     --bs-pagination-disabled-border-color: #d9d9d9;
 }
+
+/* SEPARATOR */
+
+.separator {
+  display: flex;
+  align-items: center;
+  text-align: center;
+}
+
+.separator::before,
+.separator::after {
+  content: '';
+  flex: 1;
+  border-bottom: 1px solid #000;
+  color: #6c757d;
+  border-color: #6c757d;
+  opacity: .25;
+}
+
+.separator:not(:empty)::before {
+  margin-right: .25em;
+}
+
+.separator:not(:empty)::after {
+  margin-left: .25em;
+}

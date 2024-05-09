@@ -15,3 +15,8 @@ class RacePermission(BasePermission):
             return True
         elif request.method in ['PUT', 'PATCH', 'DELETE']:
             return request.user.is_staff
+
+
+class IsStaffUser(BasePermission):
+    def has_permission(self, request, view):
+        return request.user.is_staff

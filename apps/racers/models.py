@@ -14,6 +14,7 @@ class Racer(AbstractUser):
     score = models.DecimalField(default=0, max_digits=100, decimal_places=2)
     active_since = models.DateField(auto_now_add=True)
     year_of_birth = models.DateField(null=True, blank=True)
+    country = models.CharField(max_length=70)
     stance = models.CharField(max_length=100, null=True, blank=True)
 
     class Meta:

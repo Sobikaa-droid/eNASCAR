@@ -1,11 +1,14 @@
 from django.contrib import messages
 from django.db.models import Count
 from django.shortcuts import redirect
+from django.utils import timezone
 from django.views import generic
+from rest_framework.decorators import api_view, permission_classes
+from rest_framework.response import Response
 
-from .models import Race
+from .models import Race, RaceEntry
 from .serializers import RaceSerializer
-from .permissions import RacePermission
+from .permissions import RacePermission, IsStaffUser
 
 from rest_framework import viewsets
 from rest_framework.pagination import PageNumberPagination
@@ -23,6 +26,29 @@ class RaceAPIViewSet(viewsets.ModelViewSet):
     serializer_class = RaceSerializer
     permission_classes = [RacePermission]
     pagination_class = ListPagination
+
+
+@api_view(['POST'])
+@permission_classes([IsStaffUser])
+def complete_race(request, pk):
+    if request.method == 'POST':
+        race_obj = Race.objects.prefetch_related('racers').get(pk=pk)
+        racers = race_obj.racers.all().order_by('car__car_model__speed')
+        if racers.count() == race_obj.race_limit and race_obj.completion_date is None:
+            race_entry = RaceEntry.objects.all()
+            racers_ids = [racer.id for racer in racers]
+            for position, racer_id in enumerate(racers_ids, start=1):
+                racer_entry = race_entry.get(race=race_obj, racer_id=racer_id)
+                racer_entry.position = position
+                racer_entry.save()
+            for racer in racers:
+                racer_entry = race_entry.select_related('racer').filter(racer=racer)
+                race_entry_obj = racer_entry.get(race=race_obj)
+                race_entry_obj.racer.score = (race_obj.race_limit - race_entry_obj.position + 1) / racer_entry.count()
+                race_entry_obj.racer.save()
+            race_obj.completion_date = timezone.now()
+            race_obj.save()
+        return Response({'message': 'Race was completed.'})
 
 
 class RaceListView(generic.ListView):
@@ -70,10 +96,9 @@ def apply_for_race(request, pk):
     if racers_count < race.race_limit:
         if request.user.number not in numbers_of_racers:
             if request.user.first_name and request.user.second_name:
-                if request.user.car:
+                if request.user.car.exists():
                     race.racers.add(request.user)
                     messages.success(request, f'Successfully applied for {race.name} race!')
-                    Race.objects.complete_race(pk=pk)
                 else:
                     messages.error(request, 'You dont have a car.')
             else:
