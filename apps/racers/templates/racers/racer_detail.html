@@ -10,7 +10,7 @@
           <div class="flex-grow-1">
             <h1>{{ racer.username }}
             {% if racer == request.user %}
-              <a href='{% url "racers:racer_update" request.user.pk %}' class="btn btn-outline-danger me-4">
+              <a href='{% url "racers:racer_update" request.user.pk %}' class="btn btn-outline-success me-4">
                 Edit
               </a>
             {% endif %}
@@ -26,7 +26,7 @@
         <p class="page_description text-secondary lh-base text-break">
           {{ racer.description|striptags|truncatechars:400 }}
           {% if racer.description|length >= 401 %}
-          <a class="link-danger text-decoration-none" href="#" role="button" data-bs-toggle="modal" data-bs-target="#modal-show-description">
+          <a class="link-primary text-decoration-none" href="#" role="button" data-bs-toggle="modal" data-bs-target="#modal-show-description">
           Read Full
           </a>
           {% endif %}
@@ -41,7 +41,7 @@
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
               </div>
               <div class="modal-body">
-                <p class="text-secondary text-break">{{ racer.description }}</p>
+                <p class="text-break">{{ racer.description }}</p>
               </div>
             </div>
           </div>
@@ -57,7 +57,7 @@
             </tr>
             <tr>
               <th scope="row">Car</th>
-              <td>{{ racer.car.car_model.name }}, {{ racer.car.color }}</td>
+              <td><a class="link link-primary text-decoration-none" href="{% url 'cars:car_detail' racer.car.pk %}">{{ racer.car.car_model.name }}, {{ racer.car.color }}</a></td>
             </tr>
             <tr>
               <th scope="row">Country</th>

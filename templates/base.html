@@ -10,7 +10,7 @@
     <link rel="icon" type="image/x-icon" href="{% static 'favicon.ico' %}">
   </head>
   <body>
-    <nav class="navbar navbar-expand-lg sticky-top bg_gradient_red">
+    <nav class="navbar navbar-expand-lg sticky-top bg-white">
       <div class="container">
         <a class="navbar-brand" href="{% url 'home' %}">
         <img src="{% static 'nascar.png' %}" alt="image-logo" width="138" height="25" class="d-inline-block align-top mt-2 site_logo">
@@ -36,7 +36,7 @@
               </a>
               {% endif %}
               <a class="nav-link nav_link_base" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-toggle="dropdown">
-              {{ request.user.username }} <span class="badge bg-dark">{% if request.user.is_staff %}STAFF{% else %}#{{ request.user.number }}{% endif %}</span>
+              {{ request.user.username }} <span class="badge bg-dark">{% if request.user.is_staff %}<i class="fa-solid fa-user-secret"></i>{% else %}#{{ request.user.number }}{% endif %}</span>
               </a>
               <ul class="dropdown-menu site-menu">
                 <li class="ms-4">

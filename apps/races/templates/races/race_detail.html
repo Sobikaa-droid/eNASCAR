@@ -14,10 +14,11 @@
               <span class="badge bg-secondary">OVER</span>
               {% endif %}
         </h3>
+        <hr class="text-secondary">
         <p class="page_description text-secondary lh-base text-break mb-3">
           {{ race.description|striptags|truncatechars:200 }}
           {% if race.description|length >= 201 %}
-          <a class="link-danger text-decoration-none" href="#" role="button" data-bs-toggle="modal" data-bs-target="#modal-show-description">
+          <a class="link-primary text-decoration-none" href="#" role="button" data-bs-toggle="modal" data-bs-target="#modal-show-description">
           Read Full
           </a>
           {% endif %}
@@ -41,16 +42,20 @@
         {% endif %}
         <ul class="list-group">
           <li class="list-group-item d-flex justify-content-between">
-            <span><a href="{% url 'races:race_racers_list' race.pk %}" class="link-danger text-decoration-none">Racers</a></span>
+            <span><a href="{% url 'races:race_racers_list' race.pk %}" class="link-primary text-decoration-none">Racers</a></span>
             <strong>{{ race.racers.count }}/{{ race.race_limit }}</strong>
           </li>
         </ul>
         <div class="d-flex justify-content-between align-items-center mt-3">
           {% if not race.completion_date %}
           {% if request.user not in race.racers.all %}
-          <a href="{% url 'races:apply_for_race' race.pk %}" class="btn btn-outline-danger">Apply</a>
+          <form action="{% url 'races:apply_for_race' race.pk %}" method="POST" id="frm_apply"> {% csrf_token %}
+            <a class="btn btn-outline-primary" href="javascript:$('#frm_apply').submit();">Apply</a>
+          </form>
           {% else %}
-          <a href="{% url 'races:cancel_race' race.pk %}" class="btn btn-outline-danger">Cancel</a>
+          <form action="{% url 'races:cancel_race' race.pk %}" method="POST" id="frm_cancel"> {% csrf_token %}
+            <a class="btn btn-outline-danger" href="javascript:$('#frm_cancel').submit();">Cancel</a>
+          </form>
           {% endif %}
           {% endif %}
           <small class="text-muted">{{ race.creation_date|timesince }} ago</small>

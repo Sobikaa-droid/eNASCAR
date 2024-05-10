@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.db.models import Count
-from django.shortcuts import redirect
+from django.shortcuts import redirect, get_object_or_404
 from django.utils import timezone
 from django.views import generic
 from rest_framework.decorators import api_view, permission_classes
@@ -55,13 +55,32 @@ class RaceListView(generic.ListView):
     model = Race
     context_object_name = 'races'
     paginate_by = 15
-    template_name = "races/races_list.html"
+    template_name = "races/races_list_base.html"
 
     def get_queryset(self):
-        return super().get_queryset().order_by('-pk').annotate(racers_count=Count('racers'))
+        return super().get_queryset().filter(completion_date__isnull=True).order_by('-pk').annotate(
+            racers_count=Count('racers'))
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        context['object_name'] = 'Active'
+
+        return context
+
+
+class CompletedRaceListView(generic.ListView):
+    model = Race
+    context_object_name = 'races'
+    paginate_by = 15
+    template_name = "races/races_list_base.html"
+
+    def get_queryset(self):
+        return super().get_queryset().filter(completion_date__isnull=False).order_by('-pk').annotate(
+            racers_count=Count('racers'))
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['object_name'] = 'Completed'
 
         return context
 
@@ -80,45 +99,39 @@ class RaceRacersListView(generic.DetailView):
     def get_queryset(self):
         return super().get_queryset().prefetch_related('racers')
 
-    # def get_object(self, queryset=None):
-    #     pk = self.kwargs.get('pk')
-    #     race_object = Race.objects.prefetch_related('racers').get(pk=pk)
-    #
-    #     return race_object
-
 
 def apply_for_race(request, pk):
-    race = Race.objects.get(pk=pk)
-    racers = race.racers.all()
-    numbers_of_racers = racers.values_list('number', flat=True)
-    racers_count = racers.count()
+    if request.method == 'POST':
+        race = get_object_or_404(Race, pk=pk, completion_date__isnull=True)
+        racers = race.racers.all()
+        numbers_of_racers = racers.values_list('number', flat=True)
+        racers_count = racers.count()
 
-    if racers_count < race.race_limit:
-        if request.user.number not in numbers_of_racers:
-            if request.user.first_name and request.user.second_name:
-                if request.user.car.exists():
-                    race.racers.add(request.user)
-                    messages.success(request, f'Successfully applied for {race.name} race!')
+        if request.user not in racers:
+            if racers_count < race.race_limit:
+                if request.user.number not in numbers_of_racers:
+                    if request.user.car:
+                        race.racers.add(request.user)
+                        messages.success(request, f'Successfully applied for {race.name} race!')
+                    else:
+                        messages.error(request, 'You dont have a car.')
                 else:
-                    messages.error(request, 'You dont have a car.')
+                    messages.error(request, 'Racer with this number already applied. Change your number.')
             else:
-                messages.error(request, 'You dont have a first/last name.')
+                messages.error(request, 'This race is packed.')
         else:
-            messages.error(request, 'Racer with this number already applied. Change your number.')
-    else:
-        messages.error(request, 'This race is packed.')
+            messages.error(request, 'You are already applied for another race.')
 
-    return redirect(request.META.get('HTTP_REFERER'))
+        return redirect(request.META.get('HTTP_REFERER'))
 
 
 def cancel_application_for_race(request, pk):
-    race = Race.objects.get(pk=pk)
-    racers = race.racers
+    if request.method == 'POST':
+        race = get_object_or_404(Race, pk=pk, completion_date__isnull=True)
+        racers = race.racers
 
-    if request.user in racers.all() and not race.completion_date:
-        racers.remove(request.user)
-        messages.success(request, f'Successfully cancelled application for {race.name} race')
+        if request.user in racers.all() and not race.completion_date:
+            racers.remove(request.user)
+            messages.success(request, f'Successfully cancelled application for {race.name} race')
 
-    return redirect(request.META.get('HTTP_REFERER'))
-
-
+        return redirect(request.META.get('HTTP_REFERER'))

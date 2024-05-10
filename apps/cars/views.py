@@ -1,4 +1,5 @@
 from django.contrib import messages
+from django.urls import reverse_lazy
 from django.views import generic
 from rest_framework import generics, viewsets
 
@@ -23,7 +24,7 @@ class CarAPICreateView(generics.CreateAPIView):
         serializer.save(racer=self.request.user)
 
 
-class CarAPIRetrieveUpdateView(generics.RetrieveUpdateAPIView):
+class CarAPIRetrieveUpdateDeleteView(generics.RetrieveUpdateDestroyAPIView):
     queryset = Car.objects.all()
     serializer_class = CarSerializer
     permission_classes = [CarPermission]
@@ -54,6 +55,16 @@ class CarCreateView(generic.CreateView):
         return self.request.user.get_absolute_url()
 
 
+class CarDetailView(generic.DetailView):
+    model = Car
+    context_object_name = 'car'
+    template_name = 'cars/car_detail.html'
+
+    def get_queryset(self):
+        qs = super().get_queryset().select_related('car_model', 'racer')
+        return qs
+
+
 class CarUpdateView(generic.UpdateView):
     model = Car
     form_class = CarForm
@@ -76,3 +87,18 @@ class CarUpdateView(generic.UpdateView):
 
     def get_success_url(self):
         return self.request.user.get_absolute_url()
+
+
+class CarDeleteView(generic.DeleteView):
+    model = Car
+    success_url = reverse_lazy('home')
+
+    def form_valid(self, form):
+        messages.success(self.request, f'Car has been successfully deleted.')
+
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        messages.error(self.request, form.errors)
+
+        return super().form_invalid(form)

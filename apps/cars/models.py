@@ -5,13 +5,13 @@ from apps.racers.models import Racer
 class CarModel(models.Model):
     name = models.CharField(max_length=75)
     speed = models.IntegerField()
-    year = models.DateField()
+    date_of_manufacture = models.DateField()
 
     class Meta:
         ordering = ['-pk']
 
     def __str__(self):
-        return f'{self.name} ({self.speed})'
+        return f'{self.name} - {self.date_of_manufacture} ({self.speed} km/h)'
 
 
 class Car(models.Model):

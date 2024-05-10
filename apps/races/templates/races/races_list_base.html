@@ -1,9 +1,21 @@
 {% extends 'base.html' %}
-{% block title %}Races{% endblock %}
+{% block title %}{{ object_name }} Races{% endblock %}
 {% block content %}
 <div class="grey_container">
   <div class="container mt-5 mb-5 w-50">
     <div class="bd-masthead mt-5" id="content">
+      <ul class="nav nav-underline justify-content-center">
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == '/races/' %} active {% endif %} link-dark me-3" aria-current="page" href="{% url 'races:race_list' %}">
+            <h5>Active</h5>
+          </a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == '/races/completed/' %} active {% endif %} link-dark me-3" href="{% url 'races:completed_race_list' %}">
+            <h5>Completed</h5>
+          </a>
+        </li>
+      </ul>
       <div class="list-group mb-5 mt-5">
         {% for race in races %}
         <a href="{{ race.get_absolute_url }}" class="list-group-item list-group-item-action">

@@ -30,7 +30,7 @@ class Race(models.Model):
     name = models.CharField(max_length=250)
     description = models.TextField(max_length=1500, null=True, blank=True)
     creation_date = models.DateTimeField(auto_now_add=True)
-    completion_date = models.DateTimeField(default=None, blank=True, null=True)
+    completion_date = models.DateTimeField(blank=True, null=True)
     racers = models.ManyToManyField(Racer, blank=True, through='RaceEntry')
     race_limit = models.IntegerField(default=10, validators=[MaxValueValidator(100), MinValueValidator(2)])
 
