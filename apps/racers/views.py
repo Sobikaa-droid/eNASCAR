@@ -2,6 +2,7 @@ from django.contrib import messages
 from django.contrib.auth import login, authenticate
 from django.contrib.auth.forms import AuthenticationForm
 from django.contrib.auth.views import LogoutView
+from django.db.models import Prefetch
 from django.urls import reverse_lazy
 from django.views import generic
 from rest_framework import viewsets
@@ -11,6 +12,7 @@ from .models import Racer
 from .serializers import RacerSerializer
 from .permissions import RacerPermission
 from .forms import RacerCreateForm, RacerUpdateForm
+from apps.races.models import Race
 
 
 # pagination class
@@ -50,7 +52,8 @@ class RacerDetailView(generic.DetailView):
     template_name = 'racers/racer_detail.html'
 
     def get_queryset(self):
-        qs = super().get_queryset().select_related('car').filter(is_staff=False)
+        prefetch_racers = Prefetch('race_set', queryset=Race.objects.prefetch_related('racers'))
+        qs = super().get_queryset().select_related('car').prefetch_related(prefetch_racers).filter(is_staff=False)
         return qs
 
 

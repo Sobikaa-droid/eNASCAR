@@ -79,8 +79,8 @@
     {% for message in messages %}
     <div role="alert" aria-live="assertive" aria-atomic="true" class="toast show me-4 mb-4" data-bs-autohide="true" style="position: fixed; bottom: 0; right: 0;">
       <div class="toast-header">
-        <i class="fa-solid fa-circle {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} text-danger {% else %} text-success {% endif %} me-2"></i>
-        <strong class="me-auto">{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} Error {% else %} Success {% endif %}</strong>
+        <i class="fa-solid fa-circle {% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} text-danger {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %} text-warning {% else %} text-success {% endif %} me-2"></i>
+        <strong class="me-auto">{% if message.level == DEFAULT_MESSAGE_LEVELS.ERROR %} Error {% elif message.level == DEFAULT_MESSAGE_LEVELS.WARNING %} Warning {% else %} Success {% endif %}</strong>
         <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="Close"></button>
       </div>
       <div class="toast-body">

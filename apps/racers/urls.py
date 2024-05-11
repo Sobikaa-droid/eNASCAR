@@ -10,7 +10,9 @@ router = routers.DefaultRouter()
 router.register(r'racers', views.RacerAPIViewSet, basename="racers")
 
 urlpatterns = [
+    # api
     path('api/', include(router.urls)),
+    # generic
     path('', views.RacerListView.as_view(), name='racer_list'),
     path('<int:pk>/', views.RacerDetailView.as_view(), name='racer_detail'),
     path('update/<int:pk>/', login_required(views.RacerUpdateView.as_view(), login_url='api-auth'), name='racer_update'),

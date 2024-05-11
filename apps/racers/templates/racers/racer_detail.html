@@ -89,7 +89,7 @@
           <tbody class="">
             {% for race in racer.race_set.all %}
             <tr>
-              <th scope="row"><a class="link link-danger text-decoration-none" href="{{ race.get_absolute_url }}">{{ race.name }}</a></th>
+              <th scope="row"><a class="link link-primary text-decoration-none" href="{{ race.get_absolute_url }}">{{ race.name }}</a></th>
               <td>{{ race.racers.count }}/{{ race.race_limit }}</td>
               <td>
                 {% if not race.completion_date %}

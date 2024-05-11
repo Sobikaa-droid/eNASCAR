@@ -23,7 +23,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path("__debug__/", include("debug_toolbar.urls")),
     path('api-auth/', include('rest_framework.urls'), name='api-auth'),  # for DRF auth
+
     path('', views.home, name='home'),
+
     path('racers/', include(('apps.racers.urls', 'racers'))),
     path('races/', include(('apps.races.urls', 'races'))),
     path('cars/', include(('apps.cars.urls', 'cars'))),

@@ -4,13 +4,15 @@ from django.shortcuts import redirect, get_object_or_404
 from django.utils import timezone
 from django.views import generic
 from rest_framework.decorators import api_view, permission_classes
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
+from rest_framework.views import APIView
 
 from .models import Race, RaceEntry
 from .serializers import RaceSerializer
-from .permissions import RacePermission, IsStaffUser
+from .permissions import IsStaffUserOrReadOnly, IsStaffUser
 
-from rest_framework import viewsets
+from rest_framework import viewsets, status
 from rest_framework.pagination import PageNumberPagination
 
 
@@ -24,8 +26,91 @@ class ListPagination(PageNumberPagination):
 class RaceAPIViewSet(viewsets.ModelViewSet):
     queryset = Race.objects.all().order_by('-pk')
     serializer_class = RaceSerializer
-    permission_classes = [RacePermission]
+    permission_classes = [IsStaffUserOrReadOnly]
     pagination_class = ListPagination
+
+
+class ApplyForRaceAPIView(APIView):
+    def post(self, request, pk):
+        race = get_object_or_404(Race, pk=pk, completion_date__isnull=True)
+        user = request.user
+
+        # Check if the user has an active application for another race
+        active_application = user.race_set.filter(completion_date__isnull=True)
+        if active_application.exists():
+            applied_race = active_application.first()
+            return Response(
+                {'error': f'You are already applied for {applied_race.name} race.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Check if the race is full
+        if race.racers.count() >= race.race_limit:
+            return Response(
+                {'error': 'This race is packed.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Check if racer has a car
+        if not user.car:
+            return Response(
+                {'error': 'You dont have a car.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Check if racer's number is unique in the race
+        if race.racers.filter(number=user.number).exists():
+            return Response(
+                {'error': 'Racer with this number already applied. Change your number.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Add the user to the race
+        try:
+            race.racers.add(user)
+            return Response(
+                {'success': f'Successfully applied for {race.name} race!'},
+                status=status.HTTP_200_OK
+            )
+        except ValueError as error:
+            return Response(
+                {'error': error},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+
+class CancelApplicationForRaceAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
+    def post(self, request, pk):
+        race = get_object_or_404(Race, pk=pk, completion_date__isnull=True)
+        user = request.user
+
+        # Check if racer's not applied for the race
+        if not race.racers.filter(pk=user.pk).exists():
+            return Response(
+                {'error': 'You are not applied for this race'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        # Check if race is not completed
+        if race.completion_date:
+            return Response(
+                {'error': 'This race is over'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        try:
+            race.racers.remove(user)
+            return Response(
+                {'success': f'Successfully cancelled application for {race.name} race'},
+                status=status.HTTP_200_OK
+            )
+        except ValueError as error:
+            return Response(
+                {'error': error},
+                status=status.HTTP_400_BAD_REQUEST
+            )
 
 
 @api_view(['POST'])
@@ -103,35 +188,61 @@ class RaceRacersListView(generic.DetailView):
 def apply_for_race(request, pk):
     if request.method == 'POST':
         race = get_object_or_404(Race, pk=pk, completion_date__isnull=True)
-        racers = race.racers.all()
-        numbers_of_racers = racers.values_list('number', flat=True)
-        racers_count = racers.count()
+        user = request.user
 
-        if request.user not in racers:
-            if racers_count < race.race_limit:
-                if request.user.number not in numbers_of_racers:
-                    if request.user.car:
-                        race.racers.add(request.user)
-                        messages.success(request, f'Successfully applied for {race.name} race!')
-                    else:
-                        messages.error(request, 'You dont have a car.')
-                else:
-                    messages.error(request, 'Racer with this number already applied. Change your number.')
-            else:
-                messages.error(request, 'This race is packed.')
-        else:
-            messages.error(request, 'You are already applied for another race.')
+        # Check if the user has an active application for another race
+        active_application = user.race_set.filter(completion_date__isnull=True)
+        if active_application.exists():
+            applied_race = active_application.first()
+            messages.error(request, f'You are already applied for {applied_race.name} race.')
+            return redirect('races:race_detail', pk=pk)
 
-        return redirect(request.META.get('HTTP_REFERER'))
+        # Check if the race is full
+        if race.racers.count() >= race.race_limit:
+            messages.error(request, 'This race is packed.')
+            return redirect('races:race_detail', pk=pk)
+
+        # Check if racer has a car
+        if not user.car:
+            messages.error(request, 'You don\'t have a car.')
+            return redirect('races:race_detail', pk=pk)
+
+        # Check if racer's number is unique in the race
+        if race.racers.filter(number=user.number).exists():
+            messages.error(request, 'Racer with this number already applied. Change your number.')
+            return redirect('races:race_detail', pk=pk)
+
+        # Add the user to the race
+        race.racers.add(user)
+        messages.success(request, f'Successfully applied for {race.name} race!')
+        return redirect('races:race_detail', pk=pk)
+    else:
+        messages.warning(request, f'Method {request.method} is not allowed.')
+        return redirect('races:race_detail', pk=pk)
 
 
 def cancel_application_for_race(request, pk):
     if request.method == 'POST':
         race = get_object_or_404(Race, pk=pk, completion_date__isnull=True)
-        racers = race.racers
+        user = request.user
 
-        if request.user in racers.all() and not race.completion_date:
-            racers.remove(request.user)
+        # Check if racer's not applied for the race
+        if not race.racers.filter(pk=user.pk).exists():
+            messages.error(request, f'You are not applied for this race')
+            return redirect('races:race_detail', pk=pk)
+
+        # Check if race is over
+        if race.completion_date:
+            messages.error(request, f'This race is over')
+            return redirect('races:race_detail', pk=pk)
+
+        try:
+            race.racers.remove(user)
             messages.success(request, f'Successfully cancelled application for {race.name} race')
+        except ValueError:
+            messages.error(request, f'An error occurred while canceling your application')
 
-        return redirect(request.META.get('HTTP_REFERER'))
+        return redirect('races:race_detail', pk=pk)
+    else:
+        messages.warning(request, f'Method {request.method} is not allowed.')
+        return redirect('races:race_detail', pk=pk)
