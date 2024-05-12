@@ -52,7 +52,7 @@ class CarCreateView(generic.CreateView):
         return context
 
     def get_success_url(self):
-        return self.request.user.get_absolute_url()
+        return self.object.get_absolute_url()
 
 
 class CarDetailView(generic.DetailView):
@@ -86,7 +86,7 @@ class CarUpdateView(generic.UpdateView):
         return super().form_invalid(form)
 
     def get_success_url(self):
-        return self.request.user.get_absolute_url()
+        return self.object.get_absolute_url()
 
 
 class CarDeleteView(generic.DeleteView):

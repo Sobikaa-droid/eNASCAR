@@ -1,9 +1,9 @@
 from django.core.validators import MaxValueValidator, MinValueValidator
 from django.db import models
 from django.urls import reverse
-from django.utils import timezone
 
 from apps.racers.models import Racer
+
 
 class Race(models.Model):
     name = models.CharField(max_length=250)

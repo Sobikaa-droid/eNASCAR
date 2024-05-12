@@ -1,5 +1,7 @@
 from django.db import models
+
 from apps.racers.models import Racer
+from django.urls import reverse
 
 
 class CarModel(models.Model):
@@ -24,3 +26,6 @@ class Car(models.Model):
 
     def __str__(self):
         return self.car_model
+
+    def get_absolute_url(self):
+        return reverse('cars:car_detail', args=[self.pk])

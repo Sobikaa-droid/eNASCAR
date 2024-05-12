@@ -1,10 +1,11 @@
 from django.contrib import messages
+from django.db import transaction
 from django.db.models import Count
 from django.shortcuts import redirect, get_object_or_404
 from django.utils import timezone
 from django.views import generic
 from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated
+from rest_framework.permissions import IsAuthenticated, IsAdminUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -52,7 +53,9 @@ class ApplyForRaceAPIView(APIView):
             )
 
         # Check if racer has a car
-        if not user.car:
+        try:
+            user.car
+        except user._meta.model.car.RelatedObjectDoesNotExist:
             return Response(
                 {'error': 'You dont have a car.'},
                 status=status.HTTP_400_BAD_REQUEST
@@ -113,27 +116,33 @@ class CancelApplicationForRaceAPIView(APIView):
             )
 
 
-@api_view(['POST'])
-@permission_classes([IsStaffUser])
-def complete_race(request, pk):
-    if request.method == 'POST':
-        race_obj = Race.objects.prefetch_related('racers').get(pk=pk)
-        racers = race_obj.racers.all().order_by('car__car_model__speed')
-        if racers.count() == race_obj.race_limit and race_obj.completion_date is None:
-            race_entry = RaceEntry.objects.all()
-            racers_ids = [racer.id for racer in racers]
-            for position, racer_id in enumerate(racers_ids, start=1):
-                racer_entry = race_entry.get(race=race_obj, racer_id=racer_id)
-                racer_entry.position = position
-                racer_entry.save()
-            for racer in racers:
-                racer_entry = race_entry.select_related('racer').filter(racer=racer)
-                race_entry_obj = racer_entry.get(race=race_obj)
-                race_entry_obj.racer.score = (race_obj.race_limit - race_entry_obj.position + 1) / racer_entry.count()
-                race_entry_obj.racer.save()
+class CompleteRaceAPIView(APIView):
+    permission_classes = [IsStaffUser]
+    def post(request, pk):
+        with transaction.atomic():
+            race_obj = get_object_or_404(Race.objects.prefetch_related('racers'), pk=pk, completion_date__isnull=True)
+            racers = race_obj.racers.all().order_by('car__car_model__speed')
+
+            if racers.count() != race_obj.race_limit:
+                return Response(
+                    {'error': 'Not enough racers to complete race.'},
+                    status=status.HTTP_400_BAD_REQUEST
+                )
+
+            race_entries = RaceEntry.objects.filter(race=race_obj, racer__in=racers)
+            for position, race_entry in enumerate(race_entries, start=1):
+                race_entry.position = position
+                race_entry.save()
+            for race_entry in race_entries:
+                race_entry.racer.score = (race_obj.race_limit - race_entry.position + 1) / race_entries.count()
+                race_entry.racer.save()
+
             race_obj.completion_date = timezone.now()
             race_obj.save()
-        return Response({'message': 'Race was completed.'})
+            return Response(
+                {'success': f'{race_obj.name} was successfully completed.'},
+                status=status.HTTP_200_OK
+            )
 
 
 class RaceListView(generic.ListView):
@@ -203,7 +212,9 @@ def apply_for_race(request, pk):
             return redirect('races:race_detail', pk=pk)
 
         # Check if racer has a car
-        if not user.car:
+        try:
+            user.car
+        except user._meta.model.car.RelatedObjectDoesNotExist:
             messages.error(request, 'You don\'t have a car.')
             return redirect('races:race_detail', pk=pk)
 
@@ -229,11 +240,6 @@ def cancel_application_for_race(request, pk):
         # Check if racer's not applied for the race
         if not race.racers.filter(pk=user.pk).exists():
             messages.error(request, f'You are not applied for this race')
-            return redirect('races:race_detail', pk=pk)
-
-        # Check if race is over
-        if race.completion_date:
-            messages.error(request, f'This race is over')
             return redirect('races:race_detail', pk=pk)
 
         try:

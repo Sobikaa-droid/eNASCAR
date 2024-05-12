@@ -111,3 +111,97 @@
 .separator:not(:empty)::after {
   margin-left: .25em;
 }
+
+/* CARDS CARDS CARDS CARDS CARDS */
+.card_col {
+  margin-bottom: 4.49rem !important;
+}
+
+.card {
+  --bs-card-border-radius: 25px;
+  border-width: 1;
+  background: white;
+}
+
+.card-body {
+  margin: 4rem 0 4rem 0;
+}
+
+.row>* {
+  padding-right: calc(var(--bs-gutter-x) * 1.5);
+  padding-left: calc(var(--bs-gutter-x) * 1.5);
+  margin-top: var(--bs-gutter-y);
+}
+
+.cards_row {
+  margin-right: calc(-1.5 * var(--bs-gutter-x));
+  margin-left: calc(-1.5 * var(--bs-gutter-x));
+}
+
+.fa_cards {
+  font-size: 5.5rem;
+  color: #dc3545;
+}
+
+/* ALBUM CARDS */
+.card_row.row>* {
+  padding-right: 0 !important;
+  padding-left: 0 !important;
+}
+
+.card_main:hover {
+  transform: scale(1.1);
+  border-radius: 10%;
+  box-shadow: 0 0 20px 5px #471115;
+}
+
+.card_image {
+  width: 70%;
+  height: auto;
+  transition: transform .2s; /* Animation */
+  margin: 0 auto;
+  border-radius: 10%;
+}
+
+.card_main {
+  transition: 0.15s;
+}
+
+/* Create card */
+.create_card:hover .card-title {
+  color: white !important;
+}
+
+.create_card:hover .fa-calendar-plus {
+  color: white !important;
+}
+
+.create_card:hover {
+  background-color: #471115 !important;
+}
+
+/* Edit card */
+.edit_card:hover .card-title {
+  color: white !important;
+}
+
+.edit_card:hover .fa-square-pen {
+  color: white !important;
+}
+
+.edit_card:hover {
+  background-color: #471115 !important;
+}
+
+/* Complete card */
+.complete_card:hover .card-title {
+  color: white !important;
+}
+
+.complete_card:hover .fa-calendar-check {
+  color: white !important;
+}
+
+.complete_card:hover {
+  background-color: #471115 !important;
+}

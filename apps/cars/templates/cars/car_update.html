@@ -19,6 +19,29 @@
         </form>
         <div class="d-flex">
           <button class="btn btn-outline-primary me-auto" onclick="document.getElementById('save_album').click();">Save</button>
+          <a href='#' class="btn btn-cart_delete btn-outline-danger" data-bs-toggle="modal" data-bs-target="#modal-delete-user">
+          Delete
+        </a>
+        <!-- Modal Clear Cart -->
+        <div class="modal fade" id="modal-delete-user" tabindex="-1" aria-labelledby="DeleteModalLabel" aria-hidden="true">
+          <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+              <div class="modal-header">
+                <h5 class="modal-title" id="ClearCartModalLabel">Confirmation</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+              </div>
+              <div class="modal-body">
+                <p class=''>Deleting your car will cancel your current race application. Are you sure you want to delete your car?</p>
+              </div>
+              <div class="modal-footer">
+                <form action="{% url 'cars:car_delete' request.user.car.pk %}" method="POST" id="frm_delete"> {% csrf_token %}
+                  <a class="btn btn-outline-danger" href="javascript:$('#frm_delete').submit();">Confirm</a>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+        <!-- ############ -->
         </div>
       </div>
     </div>

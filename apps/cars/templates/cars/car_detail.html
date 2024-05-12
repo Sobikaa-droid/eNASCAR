@@ -14,7 +14,7 @@
           <tbody>
             <tr>
               <th scope="row">Racer</th>
-              <td><a class="link link-primary text-decoration-none" href="{% url 'racers:racer_detail' car.racer.pk %}">{{ car.racer.username }}, #{{ car.racer.number }}</a></td>
+              <td><a class="link link-primary text-decoration-none" href="{{ car.racer.get_absolute_url }}">{{ car.racer.username }}, #{{ car.racer.number }}</a></td>
             </tr>
             <tr>
               <th scope="row">Color</th>
@@ -25,8 +25,8 @@
               <td>{{ car.car_model.speed }}</td>
             </tr>
             <tr>
-              <th scope="row">Manufacture Date</th>
-              <td>{{ car.car_model.date_of_manufacture }}</td>
+              <th scope="row">Manufacture Year</th>
+              <td>{{ car.car_model.date_of_manufacture|date:'Y' }}</td>
             </tr>
             <tr>
           </tbody>
@@ -35,9 +35,6 @@
         <div class="d-flex justify-content-between align-items-center mt-3">
           {% if request.user == car.racer %}
           <a href="{% url 'cars:car_update' car.pk %}" class="btn btn-outline-success">Edit</a>
-          <form action="{% url 'cars:car_delete' car.pk %}" method="POST" id="frm_delete"> {% csrf_token %}
-            <a class="btn btn-outline-danger" href="javascript:$('#frm_delete').submit();">Delete</a>
-          </form>
           {% endif %}
         </div>
       </div>
