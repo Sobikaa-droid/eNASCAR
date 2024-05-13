@@ -4,6 +4,21 @@
 <div class="grey_container">
   <div class="container mt-5 mb-5 w-50">
     <div class="bd-masthead mt-5" id="content">
+      <div class="d-flex mb-4">
+        <div class="dropdown me-auto">
+          <button class="btn btn btn-outline-dark dropdown-toggle" type="button" data-bs-toggle="dropdown" aria-expanded="false">
+          Sort
+          </button>
+          <ul class="dropdown-menu">
+            <li><a href="{% url 'racers:racer_list' %}?order_by=username" class="dropdown-item">Username</a></li>
+            <li><a href="{% url 'racers:racer_list' %}?order_by=score" class="dropdown-item">Score</a></li>
+          </ul>
+        </div>
+        <form method="GET" action="{% url 'racers:racer_list' %}" class="input-group w-25">
+          <input type="text" name="search_val" class="form-control" placeholder="Name" aria-label="Name" aria-describedby="button-addon2">
+          <button class="btn btn-dark" type="submit" id="button-addon2"><i class="fa-solid fa-magnifying-glass"></i> Search</button>
+        </form>
+      </div>
       <div class="list-group mb-5 mt-5">
         {% for racer in racers %}
         <a href="{{ racer.get_absolute_url }}" class="list-group-item list-group-item-action">

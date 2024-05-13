@@ -67,6 +67,19 @@
   border-radius: 10px 10px 10px 10px;
 }
 
+/* HOME */
+.gradient_bar {
+  opacity: 1;
+  height: 25%;
+  position: absolute;
+  width: 100%;
+  padding: 25px 20px 100px 20px;
+}
+
+#home_content {
+  position: relative;
+}
+
 /* PAGINATION */
 
 .pagination {
@@ -167,41 +180,63 @@
   transition: 0.15s;
 }
 
+.card_title {
+  color: white;
+}
+
+.fa_icon {
+  font-size: 3.5rem;
+  color: white;
+  font-weight: 600;
+}
+
 /* Create card */
+.create_card {
+  background-color: #ffd758 !important;
+}
+
 .create_card:hover .card-title {
   color: white !important;
 }
 
-.create_card:hover .fa-calendar-plus {
+.create_card:hover .fa_icon {
   color: white !important;
 }
 
 .create_card:hover {
-  background-color: #471115 !important;
-}
-
-/* Edit card */
-.edit_card:hover .card-title {
-  color: white !important;
-}
-
-.edit_card:hover .fa-square-pen {
-  color: white !important;
-}
-
-.edit_card:hover {
-  background-color: #471115 !important;
+  background-color: black !important;
 }
 
 /* Complete card */
+.complete_card {
+  background-color: #e50027 !important;
+}
+
 .complete_card:hover .card-title {
   color: white !important;
 }
 
-.complete_card:hover .fa-calendar-check {
+.complete_card:hover .fa_icon {
   color: white !important;
 }
 
 .complete_card:hover {
-  background-color: #471115 !important;
+  background-color: black !important;
+}
+
+/* Edit card */
+.edit_card {
+  background-color: #007bc3 !important;
+}
+
+.edit_card:hover .card-title {
+  color: white !important;
+}
+
+.edit_card:hover .fa_icon {
+  color: white !important;
+}
+
+.edit_card:hover {
+  background-color: black !important;
 }

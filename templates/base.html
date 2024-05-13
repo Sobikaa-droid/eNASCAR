@@ -21,10 +21,10 @@
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
             <li class="nav-item ms-5">
-              <a class="nav-link nav-link-fade-up nav_link_base {% if request.path == '/u/' %} nav-link-active active {% endif %}" href="{% url 'races:race_list'%}">Races</a>
+              <a class="nav-link nav-link-fade-up nav_link_base {% if request.path == '/races/' %} nav-link-active active {% endif %}" href="{% url 'races:race_list'%}">Races</a>
             </li>
             <li class="nav-item ms-5">
-              <a class="nav-link nav-link-fade-up nav_link_base {% if request.path == '/player/songs/' %} nav-link-active active {% endif %}" href="{% url 'racers:racer_list'%}">Racers</a>
+              <a class="nav-link nav-link-fade-up nav_link_base {% if request.path == '/racers/' %} nav-link-active active {% endif %}" href="{% url 'racers:racer_list'%}">Racers</a>
             </li>
           </ul>
           <ul class="navbar-nav ms-auto mb-2 mb-lg-0 mt-2">

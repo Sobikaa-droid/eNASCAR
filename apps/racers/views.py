@@ -37,6 +37,13 @@ class RacerListView(generic.ListView):
 
     def get_queryset(self):
         qs = super().get_queryset().filter(is_staff=False).order_by('-pk')
+
+        search_val = self.request.GET.get('search_val', None)
+        order_val = self.request.GET.get('order_by', '-pk')
+        if search_val:
+            qs = qs.filter(username__icontains=search_val)
+        qs = qs.order_by(order_val)
+
         return qs
 
     def get_context_data(self, **kwargs):

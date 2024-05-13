@@ -4,13 +4,11 @@
 
 {% block content %}
 
-<div class="grey_container">
-  <div class='gradient_bar text-center'>
-  </div>
+<div class="grey_container gradient_bar">
   <div class="container">
     <div class="bd-masthead" id="content">
-      <div class="user_detail mt-5 mb-4">
-        <div class="text-center mt-5 mb-5" id='home_content'>
+      <div class="user_detail mb-4 bg-white">
+        <div class="text-center mt-5 mb-5">
           <h1 style='font-size: 3rem;'>Welcome{% if request.user.is_authenticated %}, {{ request.user.username }}{% endif %}</h1>
           <div class='container w-75 mt-2'>
             <p class='text-break text-secondary'>Contrary to popular belief, Lorem Ipsum is not simply random text. It has roots in a piece of classical Latin literature from 45 BC, making it over 2000 years old. Richard McClintock, a Latin professor at Hampden-Sydney College in Virginia, looked up one of the more obscure Latin words, consectetur, from a Lorem Ipsum passage, and going through the cites of the word in classical literature, discovered the undoubtable source.</p>
@@ -27,21 +25,10 @@
 
         <div class="col card_col">
           <div class="card create_card">
-            <a class="text-decoration-none" href="">
+            <a class="text-decoration-none" href="{% url 'races:completed_race_list' %}">
             <div class="card-body">
-              <i class="fa-solid fa-arrow-up-from-bracket fa_cards"></i>
-              <h1 class="card-title mt-3 text-danger">Upload</h1>
-            </div>
-            </a>
-          </div>
-        </div>
-
-        <div class="col card_col">
-          <div class="card edit_card">
-            <a class="text-decoration-none" href="">
-            <div class="card-body">
-              <i class="fa-solid fa-music fa_cards"></i>
-              <h1 class="card-title mt-3 text-danger">Songs</h1>
+              <h2 class="fa_icon">{{ active_races.count }}</h2>
+              <h2 class="card-title mt-2 card_title">Active<br>Races</h2>
             </div>
             </a>
           </div>
@@ -49,10 +36,21 @@
 
         <div class="col card_col">
           <div class="card complete_card">
-            <a class="text-decoration-none" href="">
+            <a class="text-decoration-none" href="{% url 'racers:racer_list' %}">
             <div class="card-body">
-              <i class="fa-solid fa-user fa_cards"></i>
-              <h1 class="card-title mt-3 text-danger">Artists</h1>
+              <h2 class="fa_icon">{{ racers.count }}</h2>
+              <h2 class="card-title mt-2 card_title">Current<br>Racers</h2>
+            </div>
+            </a>
+          </div>
+        </div>
+
+        <div class="col card_col">
+          <div class="card edit_card">
+            <a class="text-decoration-none" href="{% url 'races:race_list' %}">
+            <div class="card-body">
+              <h2 class="fa_icon">{{ completed_races.count }}</h2>
+              <h2 class="card-title mt-2 card_title">Completed<br>Races</h2>
             </div>
             </a>
           </div>
