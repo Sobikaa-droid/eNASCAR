@@ -10,7 +10,11 @@
       {% for field in form %}
       <div class="mb-3">
         <!-- <label class="form-label">{{ field.label_tag }}</label> -->
+        {% if field.name == 'year_of_birth' %}
+        {% render_field field class="form-control" placeholder=field.label type="date" %}
+        {% else %}
         {% render_field field class="form-control" placeholder=field.label %}
+        {% endif %}
         <div class="form-text">
           {{ field.help_text }}
         </div>

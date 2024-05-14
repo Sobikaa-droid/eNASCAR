@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 {% load static %}
+{% url 'racers:racer_detail' request.user.pk as user_url %}
 <html lang="en">
   <head>
     <meta charset="UTF-8">
@@ -35,12 +36,12 @@
                 Get car
               </a>
               {% endif %}
-              <a class="nav-link nav_link_base" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-toggle="dropdown">
-              {{ request.user.username }} <span class="badge bg-dark">{% if request.user.is_staff %}<i class="fa-solid fa-user-secret"></i>{% else %}#{{ request.user.number }}{% endif %}</span>
+              <a class="nav-link nav_link_base {% if request.path == user_url %} text-danger {% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-toggle="dropdown">
+              {{ request.user.username }} <span class="badge bg-dark">{% if request.user.is_staff %}<i class="fa-solid fa-mask"></i>{% else %}#{{ request.user.number }}{% endif %}</span>
               </a>
               <ul class="dropdown-menu site-menu">
                 <li class="ms-4">
-                  <a class="nav-link nav_link_base {% if request.path == '/u/'|add:user.slug|add:'/' %} text-danger {% endif %}" href="{{ request.user.get_absolute_url }}" aria-current="page" type='submit'>Profile</a>
+                  <a class="nav-link nav_link_base {% if request.path == user_url %} text-danger {% endif %}" href="{{ request.user.get_absolute_url }}" aria-current="page" type='submit'>Profile</a>
                 </li>
                 <li>
                   <hr>
@@ -54,15 +55,15 @@
             </li>
             {% else %}
             <li class="nav-item dropdown">
-              <a class="nav-link nav_link_base {% if request.path == '/u/login/' or request.path == '/u/register/' %} text-danger {% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-toggle="dropdown">
+              <a class="nav-link nav_link_base {% if request.path == '/racers/login/' or request.path == '/racers/register/' %} text-danger {% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-toggle="dropdown">
               <i class="fa-solid fa-arrow-right-to-bracket"></i>
               </a>
               <ul class="dropdown-menu site-menu">
                 <li class="ms-4">
-                  <a class="nav-link nav_link_base nav-link-grow-up {% if request.path == '/racer/login/' %} text-danger {% endif %}" href="{% url 'racers:login'%}" aria-current="page" type='submit'>Log In</a>
+                  <a class="nav-link nav_link_base nav-link-grow-up {% if request.path == '/racers/login/' %} text-danger {% endif %}" href="{% url 'racers:login'%}" aria-current="page" type='submit'>Log In</a>
                 </li>
                 <li class="ms-4">
-                  <a class="nav-link nav_link_base nav-link-grow-up {% if request.path == '/racer/register/' %} text-danger {% endif %}" href="{% url 'racers:register'%}" aria-current="page" type='submit'>Sign Up</a>
+                  <a class="nav-link nav_link_base nav-link-grow-up {% if request.path == '/racers/register/' %} text-danger {% endif %}" href="{% url 'racers:register'%}" aria-current="page" type='submit'>Sign Up</a>
                 </li>
               </ul>
             </li>

@@ -12,7 +12,11 @@
           {% for field in form %}
           <div class="mb-3">
             <label class="form-label">{{ field.label_tag }}</label>
-            {% render_field field class="form-control" placeholder=field.label %}
+            {% if field.name == 'color' %}
+            {% render_field field class="form-control form-control-color" type="color" %}
+            {% else %}
+            {% render_field field class="form-control" %}
+            {% endif %}
             <div class="form-text">{{ field.help_text }}</div>
           </div>
           {% endfor %}

@@ -1,3 +1,23 @@
+html {
+  height: 100%;
+}
+
+.bg_black {
+  background-color: black;
+}
+
+.bg_yellow {
+  background-color: #ffd758;
+}
+
+.bg_red {
+  background-color: #e50027;
+}
+
+.bg_blue {
+  background-color: #007bc3;
+}
+
 /* NAVBAR */
 
 .navbar {
@@ -181,7 +201,7 @@
 }
 
 .card_title {
-  color: white;
+  color: black;
 }
 
 .fa_icon {
@@ -192,15 +212,15 @@
 
 /* Create card */
 .create_card {
-  background-color: #ffd758 !important;
+  background-color: white !important;
 }
 
 .create_card:hover .card-title {
   color: white !important;
 }
 
-.create_card:hover .fa_icon {
-  color: white !important;
+.create_card:hover .badge {
+  background-color: black !important;
 }
 
 .create_card:hover {
@@ -209,15 +229,15 @@
 
 /* Complete card */
 .complete_card {
-  background-color: #e50027 !important;
+  background-color: white !important;
 }
 
 .complete_card:hover .card-title {
   color: white !important;
 }
 
-.complete_card:hover .fa_icon {
-  color: white !important;
+.complete_card:hover .badge {
+  background-color: black !important;
 }
 
 .complete_card:hover {
@@ -226,15 +246,15 @@
 
 /* Edit card */
 .edit_card {
-  background-color: #007bc3 !important;
+  background-color: white !important;
 }
 
 .edit_card:hover .card-title {
   color: white !important;
 }
 
-.edit_card:hover .fa_icon {
-  color: white !important;
+.edit_card:hover .badge {
+  background-color: black !important;
 }
 
 .edit_card:hover {

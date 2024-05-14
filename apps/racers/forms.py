@@ -1,10 +1,13 @@
 from django import forms
 from django.contrib.auth.forms import UserCreationForm
+from django.conf import settings
 
 from .models import Racer
 
 
 class RacerCreateForm(UserCreationForm):
+    year_of_birth = forms.DateField(input_formats=settings.DATE_INPUT_FORMATS, required=True)
+
     class Meta:
         model = Racer
         fields = ["username", 'number', 'first_name', 'second_name', 'description', "password1", "password2",
@@ -21,6 +24,8 @@ class RacerCreateForm(UserCreationForm):
         for field_name, field in self.fields.items():
             if field.required:
                 field.label = f'{field.label}*'
+            else:
+                field.label = f'{field.label} (optional)'
 
     def save(self, commit=True):
         racer = super().save(commit=False)

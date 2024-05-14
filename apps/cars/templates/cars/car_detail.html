@@ -13,20 +13,20 @@
         <table class="table table-borderless" data-bs-theme="light">
           <tbody>
             <tr>
-              <th scope="row">Racer</th>
-              <td><a class="link link-primary text-decoration-none" href="{{ car.racer.get_absolute_url }}">{{ car.racer.username }}, #{{ car.racer.number }}</a></td>
+              <th scope="row" class="text-dark">Racer</th>
+              <td class="text-secondary"><a class="link link-primary text-decoration-none" href="{{ car.racer.get_absolute_url }}">{{ car.racer.username }}, #{{ car.racer.number }}</a></td>
             </tr>
             <tr>
-              <th scope="row">Color</th>
-              <td>{{ car.color }}</td>
+              <th scope="row" class="text-dark">Color</th>
+              <td class="text-secondary"><span class="badge rounded-pill border border-dark" style="background-color: {{ car.color }};">{{ car.color }}</span></td>
             </tr>
             <tr>
-              <th scope="row">Speed</th>
-              <td>{{ car.car_model.speed }}</td>
+              <th scope="row" class="text-dark">Speed</th>
+              <td class="text-secondary">{{ car.car_model.speed }}</td>
             </tr>
             <tr>
-              <th scope="row">Manufacture Year</th>
-              <td>{{ car.car_model.date_of_manufacture|date:'Y' }}</td>
+              <th scope="row" class="text-dark">Manufacture Year</th>
+              <td class="text-secondary">{{ car.car_model.date_of_manufacture|date:'Y' }}</td>
             </tr>
             <tr>
           </tbody>

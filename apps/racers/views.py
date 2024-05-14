@@ -12,7 +12,7 @@ from .models import Racer
 from .serializers import RacerSerializer
 from .permissions import RacerPermission
 from .forms import RacerCreateForm, RacerUpdateForm
-from apps.races.models import Race
+from apps.races.models import RaceEntry, Race
 
 
 # pagination class
@@ -59,8 +59,14 @@ class RacerDetailView(generic.DetailView):
     template_name = 'racers/racer_detail.html'
 
     def get_queryset(self):
-        prefetch_racers = Prefetch('race_set', queryset=Race.objects.prefetch_related('racers'))
-        qs = super().get_queryset().select_related('car').prefetch_related(prefetch_racers).filter(is_staff=False)
+        prefetch_race_entries = Prefetch(
+            'raceentry_set',
+            queryset=RaceEntry.objects
+            .select_related("race")
+            .prefetch_related("race__racers")
+            .order_by("race__completion_date"),
+        )
+        qs = super().get_queryset().select_related('car').prefetch_related(prefetch_race_entries).filter(is_staff=False)
         return qs
 
 

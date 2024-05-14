@@ -1,11 +1,10 @@
 from django.contrib import messages
 from django.db import transaction
-from django.db.models import Count
+from django.db.models import Count, Prefetch
 from django.shortcuts import redirect, get_object_or_404
 from django.utils import timezone
 from django.views import generic
-from rest_framework.decorators import api_view, permission_classes
-from rest_framework.permissions import IsAuthenticated, IsAdminUser
+from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
@@ -37,11 +36,9 @@ class ApplyForRaceAPIView(APIView):
         user = request.user
 
         # Check if the user has an active application for another race
-        active_application = user.race_set.filter(completion_date__isnull=True)
-        if active_application.exists():
-            applied_race = active_application.first()
+        if user.race_set.filter(completion_date__isnull=True).exists():
             return Response(
-                {'error': f'You are already applied for {applied_race.name} race.'},
+                {'error': f'You are already applied for this race.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -118,7 +115,8 @@ class CancelApplicationForRaceAPIView(APIView):
 
 class CompleteRaceAPIView(APIView):
     permission_classes = [IsStaffUser]
-    def post(request, pk):
+
+    def post(self, request, pk):
         with transaction.atomic():
             race_obj = get_object_or_404(Race.objects.prefetch_related('racers'), pk=pk, completion_date__isnull=True)
             racers = race_obj.racers.all().order_by('car__car_model__speed')
@@ -191,7 +189,12 @@ class RaceRacersListView(generic.DetailView):
     template_name = 'races/race_racers_list.html'
 
     def get_queryset(self):
-        return super().get_queryset().prefetch_related('racers')
+        prefetch_racers = Prefetch(
+            'raceentry_set',
+            queryset=RaceEntry.objects.prefetch_related('racer')
+        )
+        qs = super().get_queryset().prefetch_related(prefetch_racers)
+        return qs
 
 
 def apply_for_race(request, pk):
@@ -200,10 +203,8 @@ def apply_for_race(request, pk):
         user = request.user
 
         # Check if the user has an active application for another race
-        active_application = user.race_set.filter(completion_date__isnull=True)
-        if active_application.exists():
-            applied_race = active_application.first()
-            messages.error(request, f'You are already applied for {applied_race.name} race.')
+        if user.race_set.filter(completion_date__isnull=True).exists():
+            messages.error(request, f'You are already applied for this race.')
             return redirect('races:race_detail', pk=pk)
 
         # Check if the race is full

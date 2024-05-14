@@ -24,7 +24,11 @@
         </div>
         <div class="separator mb-2"><h6>Description</h6></div>
         <p class="page_description text-secondary lh-base text-break">
+          {% if racer.description %}
           {{ racer.description|striptags|truncatechars:400 }}
+          {% else %}
+          No description given.
+          {% endif %}
           {% if racer.description|length >= 401 %}
           <a class="link-primary text-decoration-none" href="#" role="button" data-bs-toggle="modal" data-bs-target="#modal-show-description">
           Read Full
@@ -52,51 +56,54 @@
         <table class="table table-borderless" data-bs-theme="light">
           <tbody>
             <tr>
-              <th scope="row">Number</th>
-              <td>{{ racer.number }}</td>
+              <th scope="row" class="text-dark">Number</th>
+              <td class="text-secondary">{{ racer.number }}</td>
             </tr>
             <tr>
-              <th scope="row">Car</th>
+              <th scope="row" class="text-dark">Car</th>
               {% if racer.car %}
-              <td><a class="link link-primary text-decoration-none" href="{{ racer.car.get_absolute_url }}">{{ racer.car.car_model.name }}, {{ racer.car.color }}</a></td>
+              <td class="text-secondary"><a class="link link-primary text-decoration-none" href="{{ racer.car.get_absolute_url }}">{{ racer.car.car_model.name }}</a></td>
               {% else %}
-              <td>None</td>
+              <td class="text-secondary">None</td>
               {% endif %}
             </tr>
             <tr>
-              <th scope="row">Country</th>
-              <td>{{ racer.country }}</td>
+              <th scope="row" class="text-dark">Country</th>
+              <td class="text-secondary">{{ racer.country }}</td>
             </tr>
             <tr>
-              <th scope="row">Date joined</th>
-              <td>{{ racer.date_joined|date:'F j, Y' }}</td>
+              <th scope="row" class="text-dark">Date joined</th>
+              <td class="text-secondary">{{ racer.date_joined|date:'F j, Y' }}</td>
             </tr>
             <tr>
-              <th scope="row">Year of birth</th>
-              <td>{{ racer.year_of_birth }}</td>
+              <th scope="row" class="text-dark">Year of birth</th>
+              <td class="text-secondary">{{ racer.year_of_birth }}</td>
             </tr>
             <tr>
-              <th scope="row">Stance</th>
-              <td>{{ racer.stance }}</td>
+              <th scope="row" class="text-dark">Stance</th>
+              <td class="text-secondary">{{ racer.stance }}</td>
             </tr>
           </tbody>
         </table>
         <div class="separator mb-2"><h6>Races</h6></div>
+        {% if racer.race_set.all %}
         <table class="table" data-bs-theme="light">
           <thead>
             <tr>
-              <th scope="col">Name</th>
-              <th scope="col">Racers</th>
-              <th scope="col">Status</th>
+              <th scope="col" class="text-dark">Name</th>
+              <th scope="col" class="text-dark">Racers</th>
+              <th scope="col" class="text-dark">Position</th>
+              <th scope="col" class="text-dark">Status</th>
             </tr>
           </thead>
           <tbody>
-            {% for race in racer.race_set.all %}
+            {% for entry in racer.raceentry_set.all %}
             <tr>
-              <th scope="row"><a class="link link-primary text-decoration-none" href="{{ race.get_absolute_url }}">{{ race.name }}</a></th>
-              <td>{{ race.racers.count }}/{{ race.race_limit }}</td>
+              <td><a class="link link-primary text-decoration-none" href="{{ entry.race.get_absolute_url }}">{{ entry.race.name }}</a></td>
+              <td class="text-secondary">{{ entry.race.racers.count }}/{{ entry.race.race_limit }}</td>
+              <td class="text-secondary">{% if entry.position %}{{ entry.position }}{% else %} - {% endif %}</td>
               <td>
-                {% if not race.completion_date %}
+                {% if not entry.race.completion_date %}
                 <span class="badge bg-success">ACTIVE</span>
                 {% else %}
                 <span class="badge bg-secondary">OVER</span>
@@ -106,6 +113,9 @@
             {% endfor %}
           </tbody>
         </table>
+        {% else %}
+        <p class="text-secondary">{{ racer.username }} didn't participate in any races.</p>
+        {% endif %}
       </div>
     </div>
   </div>
