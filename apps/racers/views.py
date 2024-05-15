@@ -76,12 +76,12 @@ class RacerUpdateView(generic.UpdateView):
     template_name = 'racers/racer_update.html'
 
     def get_object(self, queryset=None):
-        racer = super().get_queryset().get(pk=self.request.user.pk)
+        racer = super().get_queryset().select_related("car").get(pk=self.request.user.pk)
 
         return racer
 
     def form_valid(self, form):
-        messages.success(self.request, f'Profile has been updated.')
+        messages.success(self.request, 'Profile has been updated.')
 
         return super().form_valid(form)
 

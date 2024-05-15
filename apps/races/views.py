@@ -31,8 +31,10 @@ class RaceAPIViewSet(viewsets.ModelViewSet):
 
 
 class ApplyForRaceAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+
     def post(self, request, pk):
-        race = get_object_or_404(Race, pk=pk, completion_date__isnull=True)
+        race = get_object_or_404(Race.objects.prefetch_related('racers').all(), pk=pk, completion_date__isnull=True)
         user = request.user
 
         # Check if the user has an active application for another race
@@ -66,17 +68,14 @@ class ApplyForRaceAPIView(APIView):
             )
 
         # Add the user to the race
-        try:
-            race.racers.add(user)
-            return Response(
-                {'success': f'Successfully applied for {race.name} race!'},
-                status=status.HTTP_200_OK
-            )
-        except ValueError as error:
-            return Response(
-                {'error': error},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        race.racers.add(user)
+        race_entry = get_object_or_404(RaceEntry, race=race, racer=user)
+        race_entry.position = race.racers.count()
+        race_entry.save()
+        return Response(
+            {'success': f'Successfully applied for {race.name} race!'},
+            status=status.HTTP_200_OK
+        )
 
 
 class CancelApplicationForRaceAPIView(APIView):
@@ -100,39 +99,33 @@ class CancelApplicationForRaceAPIView(APIView):
                 status=status.HTTP_400_BAD_REQUEST
             )
 
-        try:
-            race.racers.remove(user)
-            return Response(
-                {'success': f'Successfully cancelled application for {race.name} race'},
-                status=status.HTTP_200_OK
-            )
-        except ValueError as error:
-            return Response(
-                {'error': error},
-                status=status.HTTP_400_BAD_REQUEST
-            )
+        race.racers.remove(user)
+        return Response(
+            {'success': f'Successfully cancelled application for {race.name} race'},
+            status=status.HTTP_200_OK
+        )
 
 
 class CompleteRaceAPIView(APIView):
     permission_classes = [IsStaffUser]
 
     def post(self, request, pk):
+        race_obj = get_object_or_404(Race.objects.prefetch_related('racers'), pk=pk, completion_date__isnull=True)
+        racers = race_obj.racers.all().order_by('car__car_model__speed')
+
+        if racers.count() != race_obj.race_limit:
+            return Response(
+                {'error': 'Not enough racers to complete race.'},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
         with transaction.atomic():
-            race_obj = get_object_or_404(Race.objects.prefetch_related('racers'), pk=pk, completion_date__isnull=True)
-            racers = race_obj.racers.all().order_by('car__car_model__speed')
-
-            if racers.count() != race_obj.race_limit:
-                return Response(
-                    {'error': 'Not enough racers to complete race.'},
-                    status=status.HTTP_400_BAD_REQUEST
-                )
-
             race_entries = RaceEntry.objects.filter(race=race_obj, racer__in=racers)
-            for position, race_entry in enumerate(race_entries, start=1):
-                race_entry.position = position
+            for place, race_entry in enumerate(race_entries, start=1):
+                race_entry.place = place
                 race_entry.save()
             for race_entry in race_entries:
-                race_entry.racer.score = (race_obj.race_limit - race_entry.position + 1) / race_entries.count()
+                race_entry.racer.score = (race_obj.race_limit - race_entry.place + 1) / race_entries.count()
                 race_entry.racer.save()
 
             race_obj.completion_date = timezone.now()
@@ -199,7 +192,7 @@ class RaceRacersListView(generic.DetailView):
 
 def apply_for_race(request, pk):
     if request.method == 'POST':
-        race = get_object_or_404(Race, pk=pk, completion_date__isnull=True)
+        race = get_object_or_404(Race.objects.prefetch_related('racers').all(), pk=pk, completion_date__isnull=True)
         user = request.user
 
         # Check if the user has an active application for another race
@@ -226,6 +219,9 @@ def apply_for_race(request, pk):
 
         # Add the user to the race
         race.racers.add(user)
+        race_entry = get_object_or_404(RaceEntry, race=race, racer=user)
+        race_entry.position = race.racers.count()
+        race_entry.save()
         messages.success(request, f'Successfully applied for {race.name} race!')
         return redirect('races:race_detail', pk=pk)
     else:
@@ -243,12 +239,8 @@ def cancel_application_for_race(request, pk):
             messages.error(request, f'You are not applied for this race')
             return redirect('races:race_detail', pk=pk)
 
-        try:
-            race.racers.remove(user)
-            messages.success(request, f'Successfully cancelled application for {race.name} race')
-        except ValueError:
-            messages.error(request, f'An error occurred while canceling your application')
-
+        race.racers.remove(user)
+        messages.success(request, f'Successfully cancelled application for {race.name} race')
         return redirect('races:race_detail', pk=pk)
     else:
         messages.warning(request, f'Method {request.method} is not allowed.')

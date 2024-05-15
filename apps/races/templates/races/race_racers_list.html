@@ -4,19 +4,22 @@
 <div class="grey_container">
   <div class="container mt-5 mb-5 w-50">
     <div class="user_detail">
-    <div class="bd-masthead mt-5 mb-5 me-5 ms-5" id="content">
-      <div class='text-center'>
-        <h1 class="mb-4">{{ race.name }}
-        {% if not race.completion_date %}
-        <span class="badge bg-success">ACTIVE</span>
-        {% else %}
-        <span class="badge bg-secondary">OVER</span>
-        {% endif %}
-        </h1>
-      </div>
+      <div class="bd-masthead mt-5 mb-5 me-5 ms-5" id="content">
+        <div class='text-center'>
+          <h1 class="mb-4">{{ race.name }}
+            {% if not race.completion_date %}
+            <span class="badge bg-success">ACTIVE</span>
+            {% else %}
+            <span class="badge bg-secondary">OVER</span>
+            {% endif %}
+          </h1>
+        </div>
         <table class="table" data-bs-theme="light">
           <thead>
             <tr>
+              {% if race.completion_date %}
+              <th scope="col" class="text-dark">Place</th>
+              {% endif %}
               <th scope="col" class="text-dark">Position</th>
               <th scope="col" class="text-dark">Racer</th>
             </tr>
@@ -24,7 +27,10 @@
           <tbody>
             {% for entry in race.raceentry_set.all %}
             <tr>
-              <td class="text-dark">{% if entry.position %}{{ entry.position }}{% else %}-{% endif %}</td>
+              {% if race.completion_date %}
+              <td><span class="badge bg-dark">{{ entry.place }}</span></td>
+              {% endif %}
+              <td class="text-dark">{{ entry.position }}</td>
               <td>
                 <a href='{% url "racers:racer_detail" entry.racer.pk %}' class="link link-primary text-decoration-none">
                 {{ entry.racer.first_name }} {{ entry.racer.second_name }} ({{ entry.racer.username }}), #{{ entry.racer.number }}
@@ -34,7 +40,7 @@
             {% endfor %}
           </tbody>
         </table>
-    </div>
+      </div>
     </div>
   </div>
 </div>

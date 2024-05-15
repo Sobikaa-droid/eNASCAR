@@ -58,7 +58,11 @@
           </form>
           {% endif %}
           {% endif %}
+          {% if not race.completion_date %}
           <small class="text-muted">{{ race.creation_date|timesince }} ago</small>
+          {% else %}
+          <small class="text-muted">Over {{ race.completion_date|timesince }} ago</small>
+          {% endif %}
         </div>
       </div>
     </div>

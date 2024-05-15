@@ -71,7 +71,7 @@ class CarUpdateView(generic.UpdateView):
     template_name = 'cars/car_update.html'
 
     def get_object(self, queryset=None):
-        song_object = super().get_queryset().prefetch_related('car_model').get(racer=self.request.user)
+        song_object = super().get_queryset().select_related('car_model').get(racer=self.request.user)
 
         return song_object
 

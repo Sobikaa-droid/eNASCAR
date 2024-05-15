@@ -36,6 +36,7 @@ class RaceEntry(models.Model):
     racer = models.ForeignKey(Racer, on_delete=models.CASCADE)
     race = models.ForeignKey(Race, on_delete=models.CASCADE)
     position = models.IntegerField(blank=True, null=True)
+    place = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
         return f"{self.racer} - {self.race}"

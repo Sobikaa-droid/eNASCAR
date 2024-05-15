@@ -92,7 +92,7 @@
             <tr>
               <th scope="col" class="text-dark">Name</th>
               <th scope="col" class="text-dark">Racers</th>
-              <th scope="col" class="text-dark">Position</th>
+              <th scope="col" class="text-dark">Place</th>
               <th scope="col" class="text-dark">Status</th>
             </tr>
           </thead>
@@ -100,8 +100,12 @@
             {% for entry in racer.raceentry_set.all %}
             <tr>
               <td><a class="link link-primary text-decoration-none" href="{{ entry.race.get_absolute_url }}">{{ entry.race.name }}</a></td>
+              {% if not entry.race.completion_date %}
               <td class="text-secondary">{{ entry.race.racers.count }}/{{ entry.race.race_limit }}</td>
-              <td class="text-secondary">{% if entry.position %}{{ entry.position }}{% else %} - {% endif %}</td>
+              {% else %}
+              <td class="text-secondary">{{ entry.race.racers.count }}</td>
+              {% endif %}
+              <td>{% if entry.place %}<span class="badge bg-dark">{{ entry.place }}</span>{% else %}<span class="text-secondary">N/A<span>{% endif %}</td>
               <td>
                 {% if not entry.race.completion_date %}
                 <span class="badge bg-success">ACTIVE</span>
