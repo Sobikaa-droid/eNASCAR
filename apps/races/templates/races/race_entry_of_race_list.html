@@ -25,7 +25,7 @@
             </tr>
           </thead>
           <tbody>
-            {% for entry in race.raceentry_set.all %}
+            {% for entry in race_entry %}
             <tr>
               {% if race.completion_date %}
               <td><span class="badge bg-dark">{{ entry.place }}</span></td>

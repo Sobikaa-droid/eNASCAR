@@ -1,6 +1,6 @@
 from django.contrib import messages
 from django.db import transaction
-from django.db.models import Count, Prefetch
+from django.db.models import Count, Prefetch, Case, When, Value, CharField, IntegerField
 from django.shortcuts import redirect, get_object_or_404
 from django.utils import timezone
 from django.views import generic
@@ -38,7 +38,7 @@ class ApplyForRaceAPIView(APIView):
         user = request.user
 
         # Check if the user has an active application for another race
-        if user.race_set.filter(completion_date__isnull=True).exists():
+        if user.race_set.filter(pk=pk).exists():
             return Response(
                 {'error': f'You are already applied for this race.'},
                 status=status.HTTP_400_BAD_REQUEST
@@ -68,14 +68,18 @@ class ApplyForRaceAPIView(APIView):
             )
 
         # Add the user to the race
-        race.racers.add(user)
-        race_entry = get_object_or_404(RaceEntry, race=race, racer=user)
-        race_entry.position = race.racers.count()
-        race_entry.save()
-        return Response(
-            {'success': f'Successfully applied for {race.name} race!'},
-            status=status.HTTP_200_OK
-        )
+        with transaction.atomic():
+            race.racers.add(user)
+            race_entry_qs = RaceEntry.objects.filter(race=race)
+            taken_positions = [i.position for i in race_entry_qs]
+            race_entry = get_object_or_404(race_entry_qs, racer=user)
+            available_positions = [i for i in range(1, race.race_limit + 1) if i not in taken_positions]
+            race_entry.position = available_positions[0]
+            race_entry.save()
+            return Response(
+                {'success': f'Successfully applied for {race.name} race!'},
+                status=status.HTTP_200_OK
+            )
 
 
 class CancelApplicationForRaceAPIView(APIView):
@@ -110,28 +114,29 @@ class CompleteRaceAPIView(APIView):
     permission_classes = [IsStaffUser]
 
     def post(self, request, pk):
-        race_obj = get_object_or_404(Race.objects.prefetch_related('racers'), pk=pk, completion_date__isnull=True)
-        racers = race_obj.racers.all().order_by('car__car_model__speed')
+        race = get_object_or_404(Race.objects.prefetch_related('racers'), pk=pk, completion_date__isnull=True)
+        racers = race.racers.all().order_by('car__car_model__speed')
 
-        if racers.count() != race_obj.race_limit:
+        if racers.count() != race.race_limit:
             return Response(
                 {'error': 'Not enough racers to complete race.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
         with transaction.atomic():
-            race_entries = RaceEntry.objects.filter(race=race_obj, racer__in=racers)
+            race_entries = RaceEntry.objects.select_related('racer').filter(race=race, racer__in=racers)
             for place, race_entry in enumerate(race_entries, start=1):
                 race_entry.place = place
                 race_entry.save()
             for race_entry in race_entries:
-                race_entry.racer.score = (race_obj.race_limit - race_entry.place + 1) / race_entries.count()
+                new_score = race_entry.racer.score + (race.race_limit - race_entry.place + 1) / race_entries.count()
+                race_entry.racer.score = new_score
                 race_entry.racer.save()
 
-            race_obj.completion_date = timezone.now()
-            race_obj.save()
+            race.completion_date = timezone.now()
+            race.save()
             return Response(
-                {'success': f'{race_obj.name} was successfully completed.'},
+                {'success': f'{race.name} was successfully completed.'},
                 status=status.HTTP_200_OK
             )
 
@@ -176,18 +181,25 @@ class RaceDetailView(generic.DetailView):
     template_name = 'races/race_detail.html'
 
 
-class RaceRacersListView(generic.DetailView):
-    model = Race
-    context_object_name = 'race'
-    template_name = 'races/race_racers_list.html'
+class RaceEntryOfRaceListView(generic.ListView):
+    model = RaceEntry
+    context_object_name = 'race_entry'
+    template_name = 'races/race_entry_of_race_list.html'
 
     def get_queryset(self):
-        prefetch_racers = Prefetch(
-            'raceentry_set',
-            queryset=RaceEntry.objects.prefetch_related('racer')
-        )
-        qs = super().get_queryset().prefetch_related(prefetch_racers)
-        return qs
+        qs = super().get_queryset().select_related('racer').filter(race__pk=self.kwargs.get('pk'))
+        obj = qs.first()
+        if obj and obj.place:
+            order_field = 'place'
+        else:
+            order_field = 'position'
+        return qs.order_by(order_field)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['race'] = get_object_or_404(Race, pk=self.kwargs.get('pk'))
+
+        return context
 
 
 def apply_for_race(request, pk):
@@ -196,7 +208,7 @@ def apply_for_race(request, pk):
         user = request.user
 
         # Check if the user has an active application for another race
-        if user.race_set.filter(completion_date__isnull=True).exists():
+        if user.race_set.filter(pk=pk).exists():
             messages.error(request, f'You are already applied for this race.')
             return redirect('races:race_detail', pk=pk)
 
@@ -217,13 +229,17 @@ def apply_for_race(request, pk):
             messages.error(request, 'Racer with this number already applied. Change your number.')
             return redirect('races:race_detail', pk=pk)
 
-        # Add the user to the race
-        race.racers.add(user)
-        race_entry = get_object_or_404(RaceEntry, race=race, racer=user)
-        race_entry.position = race.racers.count()
-        race_entry.save()
-        messages.success(request, f'Successfully applied for {race.name} race!')
-        return redirect('races:race_detail', pk=pk)
+        # Add the user to the race and set him an available position
+        with transaction.atomic():
+            race.racers.add(user)
+            race_entry_qs = RaceEntry.objects.filter(race=race)
+            taken_positions = [i.position for i in race_entry_qs]
+            race_entry = get_object_or_404(race_entry_qs, racer=user)
+            available_positions = [i for i in range(1, race.race_limit + 1) if i not in taken_positions]
+            race_entry.position = available_positions[0]
+            race_entry.save()
+            messages.success(request, f'Successfully applied for {race.name} race!')
+            return redirect('races:race_detail', pk=pk)
     else:
         messages.warning(request, f'Method {request.method} is not allowed.')
         return redirect('races:race_detail', pk=pk)

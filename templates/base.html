@@ -37,7 +37,7 @@
               </a>
               {% endif %}
               <a class="nav-link nav_link_base {% if request.path == user_url %} text-danger {% endif %}" href="#" role="button" data-bs-toggle="dropdown" aria-expanded="false" data-toggle="dropdown">
-              {{ request.user.username }} <span class="badge bg-dark">{% if request.user.is_staff %}<i class="fa-solid fa-mask"></i>{% else %}#{{ request.user.number }}{% endif %}</span>
+              {{ request.user.username }} <span class="badge bg-dark">{% if request.user.is_staff %}<i class="fa-solid fa-shield-halved"></i>{% else %}#{{ request.user.number }}{% endif %}</span>
               </a>
               <ul class="dropdown-menu site-menu">
                 <li class="ms-4">
