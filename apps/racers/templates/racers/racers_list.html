@@ -11,7 +11,8 @@
           </button>
           <ul class="dropdown-menu">
             <li><a href="{% url 'racers:racer_list' %}?order_by=username" class="dropdown-item">Username</a></li>
-            <li><a href="{% url 'racers:racer_list' %}?order_by=score" class="dropdown-item">Score</a></li>
+            <li><a href="{% url 'racers:racer_list' %}?order_by=number" class="dropdown-item">Number</a></li>
+            <li><a href="{% url 'racers:racer_list' %}?order_by=-score" class="dropdown-item">Highest Score</a></li>
           </ul>
         </div>
         <form method="GET" action="{% url 'racers:racer_list' %}" class="input-group w-25">
@@ -24,7 +25,7 @@
         <a href="{{ racer.get_absolute_url }}" class="list-group-item list-group-item-action">
           <div class="d-flex align-middle">
             <div class="me-auto">
-              <h5 class="mb-1 mt-1">{{ racer.username }} #{{ racer.number }}</h5>
+              <h5 class="mb-1 mt-1">{{ racer.username }}, #{{ racer.number }}</h5>
               <small class="text-muted">{{ racer.first_name }} {{ racer.second_name }}</small>
             </div>
             <h4 class="mt-2">

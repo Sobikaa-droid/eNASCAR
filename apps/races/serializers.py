@@ -1,6 +1,6 @@
 from rest_framework import serializers
 
-from .models import Race
+from .models import Race, RaceEntry
 from apps.racers.serializers import RacerSerializer
 
 
@@ -9,4 +9,13 @@ class RaceSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Race
+        fields = '__all__'
+
+
+class RaceEntrySerializer(serializers.ModelSerializer):
+    racer = RacerSerializer(many=False, required=False)
+    race = serializers.PrimaryKeyRelatedField(read_only=True)
+
+    class Meta:
+        model = RaceEntry
         fields = '__all__'

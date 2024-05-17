@@ -1,19 +1,18 @@
 from django.contrib import messages
 from django.db import transaction
-from django.db.models import Count, Prefetch, Case, When, Value, CharField, IntegerField
+from django.db.models import Count
 from django.shortcuts import redirect, get_object_or_404
 from django.utils import timezone
 from django.views import generic
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework import viewsets, status, generics
+from rest_framework.pagination import PageNumberPagination
 
 from .models import Race, RaceEntry
-from .serializers import RaceSerializer
+from .serializers import RaceSerializer, RaceEntrySerializer
 from .permissions import IsStaffUserOrReadOnly, IsStaffUser
-
-from rest_framework import viewsets, status
-from rest_framework.pagination import PageNumberPagination
 
 
 # pagination class
@@ -30,6 +29,27 @@ class RaceAPIViewSet(viewsets.ModelViewSet):
     pagination_class = ListPagination
 
 
+class RaceEntryAPIListView(generics.ListAPIView):
+    queryset = RaceEntry.objects.all()
+    serializer_class = RaceEntrySerializer
+
+    def get_queryset(self):
+        qs = super().get_queryset().filter(race__pk=self.kwargs.get('race_pk'))
+        self.check_permissions(self.request)
+        return qs
+
+
+class RaceEntryAPIRetrieveView(generics.RetrieveAPIView):
+    queryset = RaceEntry.objects.all()
+    serializer_class = RaceEntrySerializer
+
+    def get_object(self):
+        qs = self.get_queryset()
+        obj = get_object_or_404(qs, race__pk=self.kwargs.get('race_pk'), racer__pk=self.kwargs.get('racer_pk'))
+        self.check_object_permissions(self.request, obj)
+        return obj
+
+
 class ApplyForRaceAPIView(APIView):
     permission_classes = [IsAuthenticated]
 
@@ -38,9 +58,10 @@ class ApplyForRaceAPIView(APIView):
         user = request.user
 
         # Check if the user has an active application for another race
-        if user.race_set.filter(pk=pk).exists():
+        applied_races = user.race_set.filter(completion_date__isnull=True)
+        if applied_races.exists():
             return Response(
-                {'error': f'You are already applied for this race.'},
+                {'error': f'You are already applied for {applied_races.first().name} race.'},
                 status=status.HTTP_400_BAD_REQUEST
             )
 
@@ -125,11 +146,11 @@ class CompleteRaceAPIView(APIView):
 
         with transaction.atomic():
             race_entries = RaceEntry.objects.select_related('racer').filter(race=race, racer__in=racers)
-            for place, race_entry in enumerate(race_entries, start=1):
+            for place, race_entry in enumerate(race_entries.order_by('-racer__car__car_model__speed'), start=1):
                 race_entry.place = place
                 race_entry.save()
             for race_entry in race_entries:
-                new_score = race_entry.racer.score + (race.race_limit - race_entry.place + 1) / race_entries.count()
+                new_score = float(race_entry.racer.score) + (race.race_limit - race_entry.place + 1) / race_entries.count()
                 race_entry.racer.score = new_score
                 race_entry.racer.save()
 
@@ -144,7 +165,7 @@ class CompleteRaceAPIView(APIView):
 class RaceListView(generic.ListView):
     model = Race
     context_object_name = 'races'
-    paginate_by = 15
+    paginate_by = 10
     template_name = "races/races_list_base.html"
 
     def get_queryset(self):
@@ -161,7 +182,7 @@ class RaceListView(generic.ListView):
 class CompletedRaceListView(generic.ListView):
     model = Race
     context_object_name = 'races'
-    paginate_by = 15
+    paginate_by = 10
     template_name = "races/races_list_base.html"
 
     def get_queryset(self):
@@ -207,9 +228,10 @@ def apply_for_race(request, pk):
         race = get_object_or_404(Race.objects.prefetch_related('racers').all(), pk=pk, completion_date__isnull=True)
         user = request.user
 
-        # Check if the user has an active application for another race
-        if user.race_set.filter(pk=pk).exists():
-            messages.error(request, f'You are already applied for this race.')
+        # Check if the user has an active application for races
+        applied_races = user.race_set.filter(completion_date__isnull=True)
+        if applied_races.exists():
+            messages.error(request, f'You are already applied for {applied_races.first().name} race.')
             return redirect('races:race_detail', pk=pk)
 
         # Check if the race is full

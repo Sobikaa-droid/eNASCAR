@@ -18,6 +18,10 @@ html {
   background-color: #007bc3;
 }
 
+.link-primary {
+  color: #007bc3 !important;
+}
+
 /* NAVBAR */
 
 .navbar {
@@ -31,7 +35,7 @@ html {
   font-size: 30px;
   text-transform: uppercase;
   text-decoration: none;
-  color: #dc3545;
+  color: #e50027;
   margin: 0 0 0 0;
   display: inline-block;
   position: relative;
@@ -106,15 +110,15 @@ html {
     --bs-pagination-bg: transparent;
     --bs-pagination-border-color: #d9d9d9;
     --bs-pagination-font-size: 1.2rem;
-    --bs-pagination-color: #e50027;
+    --bs-pagination-color: #212529;
     --bs-pagination-hover-color: white;
-    --bs-pagination-hover-bg: #e50027;
-    --bs-pagination-hover-border-color: #e50027;
+    --bs-pagination-hover-bg: #212529;
+    --bs-pagination-hover-border-color: #212529;
     --bs-pagination-focus-color: white;
-    --bs-pagination-focus-bg: #e50027;
+    --bs-pagination-focus-bg: #212529;
     --bs-pagination-active-color: white;
-    --bs-pagination-active-bg: #e50027;
-    --bs-pagination-active-border-color: #e50027;
+    --bs-pagination-active-bg: #212529;
+    --bs-pagination-active-border-color: #212529;
     --bs-pagination-disabled-bg: transparent;
     --bs-pagination-disabled-border-color: #d9d9d9;
 }

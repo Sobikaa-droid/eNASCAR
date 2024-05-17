@@ -9,7 +9,7 @@
         <h3 class="d-flex justify-content-between align-items-center mb-2">
           <span>{{ race.name }}</span>
               {% if not race.completion_date %}
-              <span class="badge bg-success mt-1">ACTIVE</span>
+              <span class="badge bg-success">ACTIVE</span>
               {% else %}
               <span class="badge bg-secondary">OVER</span>
               {% endif %}
@@ -61,7 +61,7 @@
           {% if not race.completion_date %}
           <small class="text-muted">{{ race.creation_date|timesince }} ago</small>
           {% else %}
-          <small class="text-muted">Over {{ race.completion_date|timesince }} ago</small>
+          <small class="text-muted">Completed {{ race.completion_date|timesince }} ago</small>
           {% endif %}
         </div>
       </div>

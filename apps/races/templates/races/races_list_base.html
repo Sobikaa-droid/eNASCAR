@@ -21,7 +21,7 @@
         <a href="{{ race.get_absolute_url }}" class="list-group-item list-group-item-action">
           <div class="d-flex align-middle">
             <div class="me-auto">
-              <h5 class="mb-1 mt-1">{{ race.name }} <span class="badge rounded-pill bg-primary">{{ race.racers_count }}/{{ race.race_limit }}</span></h5>
+              <h5 class="mb-1 mt-1">{{ race.name }} <span class="badge rounded-pill bg_blue">{{ race.racers_count }}/{{ race.race_limit }}</span></h5>
               {% if not race.completion_date %}
               <small class="text-muted">{{ race.creation_date|timesince }} ago</small>
               {% else %}
@@ -32,7 +32,7 @@
               {% if not race.completion_date %}
               <span class="badge bg-success mt-1">ACTIVE</span>
               {% else %}
-              <span class="badge bg-secondary">OVER</span>
+              <span class="badge bg-secondary mt-1">OVER</span>
               {% endif %}
             </h4>
           </div>

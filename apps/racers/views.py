@@ -36,15 +36,14 @@ class RacerListView(generic.ListView):
     template_name = "racers/racers_list.html"
 
     def get_queryset(self):
-        qs = super().get_queryset().filter(is_staff=False).order_by('-pk')
+        qs = super().get_queryset().filter(is_staff=False)
 
         search_val = self.request.GET.get('search_val', None)
-        order_val = self.request.GET.get('order_by', '-pk')
+        order_val = self.request.GET.get('order_by', '-score')
         if search_val:
             qs = qs.filter(username__icontains=search_val)
-        qs = qs.order_by(order_val)
 
-        return qs
+        return qs.order_by(order_val)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

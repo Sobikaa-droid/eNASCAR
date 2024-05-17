@@ -15,6 +15,8 @@ urlpatterns = [
     path('api/apply/<int:pk>/', views.ApplyForRaceAPIView.as_view(), name='api_apply_for_race'),
     path('api/cancel/<int:pk>/', views.CancelApplicationForRaceAPIView.as_view(), name='api_cancel_race'),
     path('api/complete-race/<int:pk>/', views.CompleteRaceAPIView.as_view(), name='api_complete_race'),
+    path('api/race-entry/<int:race_pk>/', views.RaceEntryAPIListView.as_view(), name='api_race_entry_list'),
+    path('api/race-entry/<int:race_pk>/racer/<int:racer_pk>/', views.RaceEntryAPIRetrieveView.as_view(), name='api_race_entry_detail'),
     # generic
     path('', views.RaceListView.as_view(), name='race_list'),
     path('completed/', views.CompletedRaceListView.as_view(), name='completed_race_list'),

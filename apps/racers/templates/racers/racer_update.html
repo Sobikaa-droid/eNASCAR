@@ -2,8 +2,8 @@
 {% block title %}{{ racer.username }} update{% endblock %}
 {% block content %}
 {% load widget_tweaks %}
-<div class="container mt-5 mb-5 w-50">
-  <div class="user_detail">
+<div class="container mt-5 mb-5 w-50 pb-5">
+  <div class="user_detail mb-5">
     <div class="d-flex flex-wrap justify-content-center">
       <div class='user_detail_info ms-5 w-50 mt-5 mb-5'>
         <h1 class="text-center">Edit</h1>
@@ -19,7 +19,7 @@
           <button id='save_song' style="visibility: hidden;" type="submit">Save</button>
         </form>
         <div class="d-flex">
-          <button class="btn btn-outline-primary me-auto" onclick="document.getElementById('save_song').click();">Save</button>
+          <button class="btn btn-outline-success me-auto" onclick="document.getElementById('save_song').click();">Save</button>
         </div>
       </div>
     </div>

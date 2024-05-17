@@ -7,9 +7,9 @@ class RacerSerializer(serializers.ModelSerializer):
     class Meta:
         model = Racer
         fields = ['id', 'number', 'username', 'password', 'first_name', 'second_name', 'description', 'score',
-                  'country', 'active_since', 'year_of_birth', 'stance']
+                  'country', 'year_of_birth', 'stance']
         extra_kwargs = {'password': {'write_only': True}}
-        read_only_fields = ('score', 'active_since')
+        read_only_fields = ('score', )
 
     def create(self, validated_data):
         # car_data = validated_data['car']
