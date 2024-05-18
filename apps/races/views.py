@@ -32,6 +32,7 @@ class RaceAPIViewSet(viewsets.ModelViewSet):
 class RaceEntryAPIListView(generics.ListAPIView):
     queryset = RaceEntry.objects.all()
     serializer_class = RaceEntrySerializer
+    pagination_class = ListPagination
 
     def get_queryset(self):
         qs = super().get_queryset().filter(race__pk=self.kwargs.get('race_pk'))

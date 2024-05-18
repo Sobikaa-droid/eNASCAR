@@ -18,12 +18,9 @@ class Racer(AbstractUser):
         ordering = ['-pk']
 
     def __str__(self):
-        return f'{self.first_name} {self.second_name} ({self.username} {self.number})'
+        return f'{self.username}, #{self.number}'
 
     def save(self, *args, **kwargs):
-        # set the racer's number to random one cuz why the fuck not
-        # if not self.pk and not self.number:
-        #     self.number = random.randint(1, 99)
         super().save(*args, **kwargs)
 
     def get_absolute_url(self):

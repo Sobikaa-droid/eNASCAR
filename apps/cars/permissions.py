@@ -14,12 +14,10 @@ class CarPermission(BasePermission):
         if request.method in ['GET', 'OPTIONS', 'HEAD']:
             return True
         elif request.method in ['POST', 'PUT', 'PATCH', 'DELETE']:
-            return request.user.is_authenticated
+            return request.user.is_authenticated and not request.user.is_staff
 
     def has_object_permission(self, request, view, obj):
-        # if request.method in permissions.SAFE_METHODS:
-        #     return True
         if request.method in ['GET', 'OPTIONS', 'HEAD']:
             return True
         elif request.method in ['PUT', 'PATCH', 'DELETE']:
-            return request.user.is_staff or request.user == obj
+            return request.user == obj

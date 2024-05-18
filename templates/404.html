@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% block title %}404{% endblock %}
+{% block content %}
+{% load widget_tweaks %}
+<div class="container mt-5 mb-5 w-25">
+  <div class="text-center">
+      <h1 class='error_tag'>404</h1>
+      <p class="text-secondary error_text">The page you are looking for cannot be found</p>
+      <a class="btn btn-outline-dark" href="{% url 'home' %}">Back to Home</a>
+  </div>
+</div>
+{% endblock %}

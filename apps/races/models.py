@@ -39,4 +39,4 @@ class RaceEntry(models.Model):
     place = models.IntegerField(blank=True, null=True)
 
     def __str__(self):
-        return f"{self.racer} - {self.race}"
+        return f"{self.race} - {self.racer}"

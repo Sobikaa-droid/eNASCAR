@@ -264,3 +264,12 @@ html {
 .edit_card:hover {
   background-color: black !important;
 }
+
+/* ERROR PAGE */
+.error_tag {
+  font-size: 5rem;
+}
+
+.error_text {
+  font-size: 1.25rem;
+}
