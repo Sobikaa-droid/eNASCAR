@@ -4,4 +4,4 @@
 *.pyc
 __pycache__/
 api_help.html
-venv/
+env/
