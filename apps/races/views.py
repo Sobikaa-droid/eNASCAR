@@ -202,6 +202,11 @@ class RaceDetailView(generic.DetailView):
     context_object_name = 'race'
     template_name = 'races/race_detail.html'
 
+    # def get_context_data(self, **kwargs):
+    #     context = super().get_context_data(**kwargs)
+    #     context['racers_count'] = self.get_object().racers.count()
+    #     return context
+
 
 class RaceEntryOfRaceListView(generic.ListView):
     model = RaceEntry

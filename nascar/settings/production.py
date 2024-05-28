@@ -86,7 +86,7 @@ DATABASES = {
         'ENGINE': 'django.db.backends.mysql',
         'NAME': 'coolbase',
         'USER': 'root',
-        'PASSWORD': 'LegacySQLpassword4433',
+        'PASSWORD': 'SaintsRow34_229',
         'HOST': '127.0.0.1',
         'PORT': '3306',
     }
@@ -131,6 +131,8 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
+
+STATIC_ROOT = BASE_DIR / 'staticfiles'
 
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [BASE_DIR / 'static']  # used for production to collect static files

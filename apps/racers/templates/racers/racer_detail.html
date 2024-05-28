@@ -108,7 +108,11 @@
               <td>{% if entry.place %}<span class="badge bg-dark">{{ entry.place }}</span>{% else %}<span class="text-secondary">N/A<span>{% endif %}</td>
               <td>
                 {% if not entry.race.completion_date %}
-                <span class="badge bg-success">ACTIVE</span>
+                  {% if entry.race.racers.count == entry.race.race_limit %}
+                  <span class="badge bg-danger">CLOSED</span>
+                  {% else %}
+                  <span class="badge bg-success">ACTIVE</span>
+                  {% endif %}
                 {% else %}
                 <span class="badge bg-secondary">OVER</span>
                 {% endif %}
